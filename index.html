@@ -145,6 +145,8 @@
         .ttt-btn{background:none;border:1px solid #1e293b;color:#475569;font-family:'Rajdhani',sans-serif;font-size:.85rem;letter-spacing:2px;padding:8px 20px;border-radius:6px;cursor:pointer;text-transform:uppercase;transition:color .2s,border-color .2s;}
         .ttt-btn:hover{color:#94a3b8;border-color:#334155;}
         @media(max-width:400px){.ttt-cell{width:80px;height:80px;font-size:2rem;}}
+        .tbtn{transition:background .15s,border-color .15s;}
+        .tbtn.sel{background:#1a3a5a !important;border-color:#378ADD !important;}
     </style>
 </head>
 <body>
@@ -1446,8 +1448,8 @@ function gdSetupTowerBtns(){
     var icons=['&#127993;','&#128163;','&#10052;&#65039;','&#9889;','&#9881;&#65039;'];
     var names=['Archer','Bomber','Ice Wiz','Electro','Grindstone'];
     var descs=['70g &middot; fast','150g &middot; AoE','100g &middot; Slows','110g &middot; Chain','120g &middot; Aura'];
-    var bgs=['#1a3a5a','#2a2a2a','#2a2a2a','#2a2a2a','#2a2a2a'];
-    var borders=['#378ADD','#444','#444','#444','#444'];
+    var bgs=['#2a2a2a','#2a2a2a','#2a2a2a','#2a2a2a','#2a2a2a'];
+    var borders=['#444','#444','#444','#444','#444'];
     var html='';
     for(var i=0;i<types.length;i++){
         var id=types[i];
