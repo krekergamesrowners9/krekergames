@@ -48,7 +48,7 @@
         footer{position:relative;z-index:1;text-align:center;padding:30px;color:#1e293b;font-size:.8rem;letter-spacing:2px;border-top:1px solid rgba(255,255,255,0.03);}
         .overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
         .overlay.open{display:flex;}
-        .game-window{background:#0a1628;border:1px solid var(--border);border-radius:16px;overflow:hidden;width:min(760px,99vw);box-shadow:0 0 60px rgba(0,229,255,0.15);animation:popIn .2s ease;max-height:92vh;overflow-y:auto;}
+        .game-window{background:#0a1628;border:1px solid var(--border);border-radius:16px;overflow-y:auto;width:min(560px,99vw);box-shadow:0 0 60px rgba(0,229,255,0.15);animation:popIn .2s ease;max-height:92vh;}
         @keyframes popIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
         .game-window-bar{display:flex;align-items:center;gap:10px;padding:12px 18px;background:rgba(15,23,42,0.95);border-bottom:1px solid rgba(255,255,255,0.05);position:sticky;top:0;z-index:10;}
         .game-window-title{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;color:var(--neon);}
@@ -147,7 +147,13 @@
         @media(max-width:400px){.ttt-cell{width:80px;height:80px;font-size:2rem;}}
         .tbtn{transition:background .15s,border-color .15s;}
         .tbtn.sel{background:#1a3a5a !important;border-color:#378ADD !important;}
-    </style>
+    
+        @keyframes marqueeGlow {
+            from { text-shadow: 0 0 8px #ffcc44, 0 0 20px #ff8800, 0 0 40px rgba(255,136,0,0.3); }
+            to   { text-shadow: 0 0 12px #ffe066, 0 0 30px #ffaa00, 0 0 60px rgba(255,160,0,0.6); }
+        }
+        #stk-score-display.pop { transform: scale(1.15); }
+        </style>
 </head>
 <body>
 <nav>
@@ -162,8 +168,6 @@
     <div id="libraryContainer">
         <div class="library-empty" id="libraryEmpty">Play a game to add it to your library</div>
         <div class="library-grid" id="libraryGrid" style="display:none;"></div>
-    </div>
-</div>
 <footer>&copy; 2026 Kreker Games Studio</footer>
 
 <div class="overlay" id="overlay">
@@ -311,9 +315,84 @@
                 </div>
             </div>
         </div>
+        <!-- STACK -->
+        <div id="gameStack" style="display:none;">
+            <div style="display:flex;justify-content:center;align-items:center;background:#0a0a0a;padding:10px;border-radius:0 0 16px 16px;">
+                <div id="stk-cabinet" style="position:relative;display:flex;flex-direction:column;align-items:center;background:linear-gradient(180deg,#1c1008 0%,#120b05 40%,#0e0805 100%);border-radius:18px 18px 8px 8px;padding:18px 22px 24px;box-shadow:0 0 0 2px #2a1a08,0 0 0 4px #1a0e04,0 4px 0 6px #0a0602,6px 0 24px rgba(0,0,0,0.8),-6px 0 24px rgba(0,0,0,0.8),0 12px 60px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,180,60,0.12),inset 2px 0 8px rgba(0,0,0,0.5),inset -2px 0 8px rgba(0,0,0,0.5);">
+                    <div id="stk-marquee" style="width:100%;text-align:center;font-size:11px;font-weight:900;letter-spacing:8px;color:#ffcc44;text-shadow:0 0 8px #ffcc44,0 0 20px #ff8800;background:linear-gradient(180deg,#1a0e00,#0e0800);border:1px solid #2a1800;border-bottom:none;padding:8px 0 6px;margin-bottom:12px;border-radius:6px 6px 0 0;animation:marqueeGlow 2.5s ease-in-out infinite alternate;">✦ STACK ✦</div>
+                    <div id="stk-screen-bezel" style="background:#0a0805;border-radius:6px;padding:12px 12px 14px;box-shadow:0 0 0 2px #1a1208,0 0 0 4px #0e0c06,inset 0 0 20px rgba(0,0,0,0.9);position:relative;">
+                        <div id="stk-game-container" style="position:relative;width:320px;display:flex;flex-direction:column;align-items:center;">
+                            <div id="stk-hud" style="width:100%;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;padding:0 2px;">
+                                <div>
+                                    <div id="stk-score-display" style="font-family:'Orbitron',monospace;font-size:56px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 20px rgba(0,220,255,0.6),0 0 40px rgba(0,220,255,0.3);transition:transform 0.08s ease;">0</div>
+                                    <div id="stk-combo-text" style="font-family:monospace;font-size:10px;letter-spacing:3px;color:#00ffaa;height:14px;text-shadow:0 0 8px #00ffaa;margin-top:4px;"></div>
+                                </div>
+                                <button id="stk-pause-btn" style="background:none;border:1px solid rgba(0,220,255,0.3);color:rgba(0,220,255,0.7);font-size:18px;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:4px;flex-shrink:0;margin-top:4px;" title="Pause">⏸</button>
+                            </div>
+                            <div style="position:relative;width:320px;height:480px;">
+                                <canvas id="stk-canvas" width="320" height="480" style="display:block;border-radius:3px;border:1px solid rgba(0,220,255,0.15);box-shadow:0 0 30px rgba(0,220,255,0.08);"></canvas>
+                                <div id="stk-start-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(6,6,14,0.93);border-radius:3px;transition:opacity 0.25s;z-index:10;">
+                                    <div style="font-family:'Orbitron',monospace;font-size:32px;font-weight:900;letter-spacing:6px;color:#00dcff;text-shadow:0 0 20px #00dcff;margin-bottom:6px;">STACK</div>
+                                    <div style="font-family:monospace;font-size:10px;letter-spacing:3px;color:#444;margin-bottom:28px;">TAP ANYWHERE TO DROP</div>
+                                    <div style="display:flex;gap:10px;">
+                                        <button id="stk-start-btn" style="background:none;border:1px solid rgba(0,255,170,0.35);color:rgba(0,255,170,0.85);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:3px;padding:12px 22px;cursor:pointer;border-radius:2px;">▶ START</button>
+                                    </div>
+                                    <div style="font-family:monospace;font-size:10px;letter-spacing:2px;color:#2a2a3a;margin-top:14px;">BEST <span id="stk-best-start">0</span></div>
+                                </div>
+                                <div id="stk-over-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(6,6,14,0.93);border-radius:3px;transition:opacity 0.25s;z-index:10;opacity:0;pointer-events:none;">
+                                    <div style="font-family:'Orbitron',monospace;font-size:32px;font-weight:900;letter-spacing:6px;color:#ff4466;text-shadow:0 0 20px #ff4466;margin-bottom:6px;">GAME OVER</div>
+                                    <div style="font-family:monospace;font-size:10px;letter-spacing:3px;color:#444;margin-bottom:4px;">SCORE</div>
+                                    <div id="stk-final-score" style="font-size:48px;font-weight:900;color:#00ffaa;text-shadow:0 0 24px #00ffaa;margin-bottom:28px;">0</div>
+                                    <div style="display:flex;gap:10px;">
+                                        <button id="stk-again-btn" style="background:none;border:1px solid rgba(0,255,170,0.35);color:rgba(0,255,170,0.85);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:3px;padding:12px 22px;cursor:pointer;border-radius:2px;">↺ PLAY AGAIN</button>
+                                        <button id="stk-lobby-btn" style="background:none;border:1px solid rgba(0,220,255,0.35);color:rgba(0,220,255,0.85);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:3px;padding:12px 22px;cursor:pointer;border-radius:2px;">⌂ LOBBY</button>
+                                    </div>
+                                    <div style="font-family:monospace;font-size:10px;letter-spacing:2px;color:#2a2a3a;margin-top:14px;">BEST <span id="stk-best-over">0</span></div>
+                                </div>
+                                <div id="stk-pause-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(6,6,14,0.93);border-radius:3px;transition:opacity 0.25s;z-index:10;opacity:0;pointer-events:none;">
+                                    <div style="font-family:'Orbitron',monospace;font-size:32px;font-weight:900;letter-spacing:6px;color:#00dcff;text-shadow:0 0 20px #00dcff;margin-bottom:6px;">PAUSED</div>
+                                    <div style="font-family:monospace;font-size:10px;letter-spacing:3px;color:#444;margin-bottom:28px;">GAME SUSPENDED</div>
+                                    <div style="display:flex;gap:10px;">
+                                        <button id="stk-resume-btn" style="background:none;border:1px solid rgba(0,255,170,0.35);color:rgba(0,255,170,0.85);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:3px;padding:12px 22px;cursor:pointer;border-radius:2px;">▶ RESUME</button>
+                                        <button id="stk-pause-lobby-btn" style="background:none;border:1px solid rgba(0,220,255,0.35);color:rgba(0,220,255,0.85);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:3px;padding:12px 22px;cursor:pointer;border-radius:2px;">⌂ LOBBY</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width:100%;display:flex;justify-content:center;align-items:center;gap:14px;margin-top:14px;padding:0 8px;">
+                        <div style="width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ff6655,#cc1100);box-shadow:0 2px 4px rgba(0,0,0,0.8),0 0 8px #ff3311;"></div>
+                        <div style="width:18px;height:36px;background:linear-gradient(180deg,#333 0%,#111 100%);border-radius:4px 4px 8px 8px;box-shadow:0 3px 6px rgba(0,0,0,0.7);position:relative;"></div>
+                        <div style="width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#44aaff,#0044cc);box-shadow:0 2px 4px rgba(0,0,0,0.8),0 0 8px #2288ff;"></div>
+                        <div style="width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffee44,#cc9900);box-shadow:0 2px 4px rgba(0,0,0,0.8),0 0 8px #ffcc00;"></div>
+                    </div>
+                </div>
+            </div>
+        <!-- FARM CLICKER -->
+        <div id="gameFarm" style="display:none;border-radius:0 0 16px 16px;overflow:hidden;">
+            <div style="background:linear-gradient(160deg,#1a6fc4 0%,#0d4a8a 100%);padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;">
+                <div id="fc-bgDeco" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+                <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;">
+                    <div style="text-align:center;">
+                        <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:#FFD166;text-shadow:0 3px 0 rgba(0,0,0,0.2);">🌾 Farm Clicker</div>
+                        <div id="fc-tierLabel" style="font-family:'Fredoka One',cursive;font-size:0.85rem;color:rgba(255,255,255,0.7);margin-top:4px;">Common Crop</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:20px;padding:12px 40px;text-align:center;">
+                        <div style="font-size:0.75rem;opacity:0.7;text-transform:uppercase;letter-spacing:1px;color:#fff;">Fruits</div>
+                        <div id="fc-scoreVal" style="font-family:'Fredoka One',cursive;font-size:2.8rem;color:#FFD166;line-height:1.1;">0</div>
+                        <div id="fc-perSec" style="font-size:0.75rem;opacity:0.55;color:#fff;margin-top:2px;">0 per second</div>
+                    </div>
+                    <button id="fc-fruitBtn" style="width:150px;height:150px;border-radius:50%;border:none;background:radial-gradient(circle at 38% 35%,rgba(255,255,255,0.6) 10%,transparent 60%),linear-gradient(135deg,#FFD166,#ff9900);box-shadow:0 8px 0 #b36a00,0 12px 30px rgba(0,0,0,0.3);cursor:pointer;font-size:3.5rem;display:flex;align-items:center;justify-content:center;outline:none;">🍊</button>
+                    <div style="width:100%;max-width:500px;">
+                        <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:8px;letter-spacing:2px;text-transform:uppercase;">Upgrades</div>
+                        <div id="fc-upgradeGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:220px;overflow-y:auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
     </div>
 </div>
-
 <script>
 // ── STORE ──
 var GAMES=[
@@ -321,6 +400,8 @@ var GAMES=[
     {id:'snaker',name:'SNAKER',genre:'Arcade',color:'#001a0a',accent:'#22c55e',icon:'&#128013;'},
     {id:'ttt',name:'TIC TAC TOE',genre:'Strategy',color:'#0d0a1e',accent:'#a855f7',icon:'&#9997;'},
     {id:'defense',name:'GOLDEN DEFENSE',genre:'Strategy',color:'#1a1200',accent:'#EF9F27',icon:'&#9876;'},
+    {id:'stack',name:'STACK',genre:'Arcade',color:'#04020f',accent:'#00dcff',icon:'&#127915;'},
+    {id:'farm',name:'FARM CLICKER',genre:'Casual',color:'#0d4a1a',accent:'#FFD166',icon:'&#127806;'},
     {id:'game3',name:'RACER',genre:'Action',color:'#1a0800',accent:'#ff4500',icon:'&#127950;',comingSoon:true},
 ];
 var library=JSON.parse(localStorage.getItem('kg-library')||'[]');
@@ -355,12 +436,14 @@ function addToLibrary(id){if(!library.includes(id)){library.push(id);localStorag
 function openGame(gm){
     document.getElementById('windowTitle').textContent=gm.name;
     document.getElementById('overlay').classList.add('open');
-    ['gameClicker','gameSnake','gameTTT','gameDefense'].forEach(function(id){document.getElementById(id).style.display='none';});
+    ['gameClicker','gameSnake','gameTTT','gameDefense','gameStack','gameFarm'].forEach(function(id){document.getElementById(id).style.display='none';});
     stopSnakeLoop();
     if(gm.id==='clicker')document.getElementById('gameClicker').style.display='block';
     else if(gm.id==='snaker'){document.getElementById('gameSnake').style.display='block';resetSnake();}
     else if(gm.id==='ttt'){document.getElementById('gameTTT').style.display='block';initTTTMenu();}
     else if(gm.id==='defense'){document.getElementById('gameDefense').style.display='block';initDefense();}
+    else if(gm.id==='stack'){document.getElementById('gameStack').style.display='block';initStack();}
+    else if(gm.id==='farm'){document.getElementById('gameFarm').style.display='block';initFarm();}
     addToLibrary(gm.id);
 }
 function closeGame(){document.getElementById('overlay').classList.remove('open');stopSnakeLoop();}
@@ -1466,8 +1549,443 @@ function gdSetupTowerBtns(){
     if(archerBtn) archerBtn.classList.add('sel');
     selType='archer';
 }
+
+// ── STACK GAME ──
+var stkState = 'idle';
+var stkScore = 0;
+var stkBest = parseInt(localStorage.getItem('stackBest') || '0');
+var stkBlocks = [], stkMoving = null;
+var stkOffset = 0, stkTargetOffset = 0;
+var stkFalling = [];
+var stkPerfStreak = 0;
+var stkComboTimer = null;
+var stkAnimId = null;
+var stkInitialized = false;
+
+var STK_BLOCK_H = 28, STK_VISIBLE = 12, STK_BASE_SPD = 2.4, STK_SPD_INC = 0.13;
+var STK_PALETTES = [
+  ['#0d1f3c','#00dcff'],['#1a0d3c','#b44aff'],['#0d3c1a','#00ff88'],['#3c0d1a','#ff4466'],
+  ['#3c2a0d','#ffaa00'],['#0d2e3c','#00ccff'],['#1f3c0d','#aaff00'],['#3c0d30','#ff44cc']
+];
+function stkPalette(i){ return STK_PALETTES[i % STK_PALETTES.length]; }
+
+function stkShowOverlay(id){
+  ['stk-start-overlay','stk-over-overlay','stk-pause-overlay'].forEach(function(n){
+    var el=document.getElementById(n);
+    if(n===id){ el.style.opacity='1'; el.style.pointerEvents='auto'; }
+    else { el.style.opacity='0'; el.style.pointerEvents='none'; }
+  });
+}
+function stkHideAll(){
+  ['stk-start-overlay','stk-over-overlay','stk-pause-overlay'].forEach(function(n){
+    var el=document.getElementById(n);
+    if(el){ el.style.opacity='0'; el.style.pointerEvents='none'; }
+  });
+}
+
+function stkUpdateBest(){
+  var s=document.getElementById('stk-best-start'); if(s) s.textContent=stkBest;
+  var o=document.getElementById('stk-best-over'); if(o) o.textContent=stkBest;
+}
+
+function stkInitGame(){
+  stkScore=0; stkPerfStreak=0; stkBlocks=[]; stkFalling=[];
+  stkOffset=0; stkTargetOffset=0;
+  stkSetScore(0); stkSetCombo('');
+  var canvas=document.getElementById('stk-canvas');
+  var W=canvas.width, H=canvas.height;
+  var baseW=200, baseX=(W-baseW)/2;
+  for(var i=0;i<3;i++){
+    var p=stkPalette(i);
+    stkBlocks.push({x:baseX,w:baseW,y:H-STK_BLOCK_H*(i+1),fill:p[0],glow:p[1]});
+  }
+  stkSpawnMoving();
+}
+
+function stkSpawnMoving(){
+  var canvas=document.getElementById('stk-canvas');
+  var W=canvas.width;
+  var last=stkBlocks[stkBlocks.length-1];
+  var p=stkPalette(stkBlocks.length);
+  var spd=(STK_BASE_SPD+STK_SPD_INC*Math.min(stkScore,35))*(Math.random()<0.5?1:-1);
+  stkMoving={x:spd>0?-last.w:W,w:last.w,y:last.y-STK_BLOCK_H,speed:spd,fill:p[0],glow:p[1]};
+}
+
+function stkDrop(){
+  if(stkState!=='playing') return;
+  var canvas=document.getElementById('stk-canvas');
+  var W=canvas.width, H=canvas.height;
+  var last=stkBlocks[stkBlocks.length-1];
+  var cur=stkMoving;
+  var oStart=Math.max(cur.x,last.x), oEnd=Math.min(cur.x+cur.w,last.x+last.w), oW=oEnd-oStart;
+  if(oW<=0){ stkSpawnFalling(cur.x,cur.y,cur.w,cur.fill,cur.glow); stkGameOver(); return; }
+  var PERF=7, fx=oStart, fw=oW;
+  if(Math.abs(oW-last.w)<=PERF){
+    fx=last.x; fw=last.w; stkPerfStreak++;
+    stkSetCombo(stkPerfStreak>=3?stkPerfStreak+'✕ PERFECT':'PERFECT');
+  } else {
+    stkPerfStreak=0; stkSetCombo('');
+    if(cur.x<last.x) stkSpawnFalling(cur.x,cur.y,last.x-cur.x,cur.fill,cur.glow);
+    else stkSpawnFalling(last.x+last.w,cur.y,(cur.x+cur.w)-(last.x+last.w),cur.fill,cur.glow);
+  }
+  stkBlocks.push({x:fx,w:fw,y:cur.y,fill:cur.fill,glow:cur.glow});
+  stkScore++; stkSetScore(stkScore);
+  if(stkBlocks.length>STK_VISIBLE) stkTargetOffset=(stkBlocks.length-STK_VISIBLE)*STK_BLOCK_H;
+  stkSpawnMoving();
+}
+
+function stkSpawnFalling(x,y,w,fill,glow){
+  stkFalling.push({x,y,w,fill,glow,vy:2,vx:(Math.random()-0.5)*3,rot:0,vrot:(Math.random()-0.5)*0.15,alpha:1});
+}
+function stkUpdateFalling(){
+  stkFalling=stkFalling.filter(function(p){return p.alpha>0.02;});
+  stkFalling.forEach(function(p){p.vy+=0.4;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vrot;p.alpha*=0.94;});
+}
+
+function stkSetScore(n){
+  var el=document.getElementById('stk-score-display'); if(!el) return;
+  el.textContent=n; el.style.transform='scale(1.15)';
+  setTimeout(function(){el.style.transform='';},80);
+}
+function stkSetCombo(text){
+  clearTimeout(stkComboTimer);
+  var el=document.getElementById('stk-combo-text'); if(!el) return;
+  el.textContent=text;
+  if(text) stkComboTimer=setTimeout(function(){el.textContent='';},700);
+}
+
+function stkGameOver(){
+  stkState='over';
+  if(stkScore>stkBest){ stkBest=stkScore; localStorage.setItem('stackBest',stkBest); stkUpdateBest(); }
+  var fs=document.getElementById('stk-final-score'); if(fs) fs.textContent=stkScore;
+  setTimeout(function(){stkShowOverlay('stk-over-overlay');},400);
+}
+
+function stkStart(){ stkState='playing'; stkHideAll(); stkInitGame(); }
+function stkLobby(){ stkState='idle'; stkShowOverlay('stk-start-overlay'); }
+function stkPause(){ if(stkState!=='playing') return; stkState='paused'; stkShowOverlay('stk-pause-overlay'); var b=document.getElementById('stk-pause-btn'); if(b) b.textContent='▶'; }
+function stkResume(){ if(stkState!=='paused') return; stkState='playing'; stkHideAll(); var b=document.getElementById('stk-pause-btn'); if(b) b.textContent='⏸'; }
+
+function stkLighten(hex,amt){
+  var n=parseInt(hex.slice(1),16);
+  var r=Math.min(255,((n>>16)&0xff)+Math.round(255*amt));
+  var g=Math.min(255,((n>>8)&0xff)+Math.round(255*amt));
+  var b=Math.min(255,(n&0xff)+Math.round(255*amt));
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+var stkBgTime=0;
+function stkDrawBG(ctx,W,H){
+  stkBgTime+=0.012;
+  var bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#000008'); bg.addColorStop(0.5,'#04020f'); bg.addColorStop(1,'#080418');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  var horizon=H*0.58;
+  ctx.save(); ctx.strokeStyle='rgba(0,180,255,0.18)'; ctx.lineWidth=0.8;
+  for(var i=0;i<=14;i++){
+    var t=i/14, ease=t*t, y2=horizon+ease*(H-horizon), spread=ease*W*0.9;
+    ctx.globalAlpha=0.08+ease*0.22; ctx.beginPath();
+    ctx.moveTo(W/2-spread/2,y2); ctx.lineTo(W/2+spread/2,y2); ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+  for(var i=0;i<=14;i++){
+    var t=i/14, xB=W*t;
+    ctx.globalAlpha=0.06+Math.abs(t-0.5)*0.2; ctx.beginPath();
+    ctx.moveTo(W/2,horizon); ctx.lineTo(xB,H); ctx.stroke();
+  }
+  ctx.restore();
+  var pulse=0.6+0.4*Math.sin(stkBgTime*2);
+  ctx.save(); ctx.globalAlpha=pulse*0.7;
+  var hLine=ctx.createLinearGradient(0,0,W,0);
+  hLine.addColorStop(0,'transparent'); hLine.addColorStop(0.2,'#ff00cc');
+  hLine.addColorStop(0.5,'#ff44ff'); hLine.addColorStop(0.8,'#ff00cc'); hLine.addColorStop(1,'transparent');
+  ctx.fillStyle=hLine; ctx.shadowColor='#ff00ff'; ctx.shadowBlur=12;
+  ctx.fillRect(0,horizon-1,W,2); ctx.restore();
+  ctx.fillStyle='rgba(0,0,0,0.10)';
+  for(var y=0;y<H;y+=3) ctx.fillRect(0,y,W,1);
+}
+
+function stkDrawBlock(ctx,b,offsetY,alpha,H){
+  var y=b.y+offsetY;
+  if(y>H+STK_BLOCK_H||y+STK_BLOCK_H<-STK_BLOCK_H) return;
+  ctx.save(); ctx.globalAlpha=alpha;
+  var grad=ctx.createLinearGradient(b.x,y,b.x,y+STK_BLOCK_H);
+  grad.addColorStop(0,stkLighten(b.fill,0.18)); grad.addColorStop(1,b.fill);
+  ctx.fillStyle=grad; ctx.shadowColor=b.glow; ctx.shadowBlur=14;
+  ctx.fillRect(b.x+1,y+1,b.w-2,STK_BLOCK_H-2);
+  ctx.strokeStyle=b.glow; ctx.lineWidth=1.5; ctx.shadowBlur=18;
+  ctx.strokeRect(b.x+1,y+1,b.w-2,STK_BLOCK_H-2);
+  ctx.shadowBlur=0; ctx.fillStyle='rgba(255,255,255,0.07)';
+  ctx.fillRect(b.x+2,y+2,b.w-4,5); ctx.restore();
+}
+
+function stkDraw(){
+  var canvas=document.getElementById('stk-canvas'); if(!canvas) return;
+  var ctx=canvas.getContext('2d'); var W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H); stkDrawBG(ctx,W,H);
+  stkOffset+=(stkTargetOffset-stkOffset)*0.11;
+  stkBlocks.forEach(function(b,i){
+    stkDrawBlock(ctx,b,-stkOffset,Math.min(1,0.35+(i/stkBlocks.length)*0.65),H);
+  });
+  if(stkMoving&&stkState==='playing'){
+    stkMoving.x+=stkMoving.speed;
+    if(stkMoving.x+stkMoving.w>W+30) stkMoving.speed=-Math.abs(stkMoving.speed);
+    if(stkMoving.x<-30) stkMoving.speed=Math.abs(stkMoving.speed);
+    var last=stkBlocks[stkBlocks.length-1];
+    ctx.save(); ctx.setLineDash([3,7]); ctx.strokeStyle=last.glow+'22'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(last.x,0); ctx.lineTo(last.x,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(last.x+last.w,0); ctx.lineTo(last.x+last.w,H); ctx.stroke();
+    ctx.restore();
+    stkDrawBlock(ctx,stkMoving,-stkOffset,0.95,H);
+  }
+  stkUpdateFalling();
+  stkFalling.forEach(function(p){
+    ctx.save(); ctx.globalAlpha=p.alpha;
+    var cx=p.x+p.w/2, cy=p.y+STK_BLOCK_H/2;
+    ctx.translate(cx,cy); ctx.rotate(p.rot);
+    ctx.shadowColor=p.glow; ctx.shadowBlur=12; ctx.fillStyle=p.fill;
+    ctx.fillRect(-p.w/2,-STK_BLOCK_H/2,p.w,STK_BLOCK_H);
+    ctx.strokeStyle=p.glow; ctx.lineWidth=1.5;
+    ctx.strokeRect(-p.w/2,-STK_BLOCK_H/2,p.w,STK_BLOCK_H);
+    ctx.restore();
+  });
+}
+
+function stkLoop(){ stkDraw(); stkAnimId=requestAnimationFrame(stkLoop); }
+
+function initStack(){
+  stkUpdateBest();
+  stkShowOverlay('stk-start-overlay');
+  stkState='idle';
+  if(!stkInitialized){
+    stkInitialized=true;
+    // Buttons
+    document.getElementById('stk-start-btn').addEventListener('click',function(e){e.stopPropagation();stkStart();});
+    document.getElementById('stk-again-btn').addEventListener('click',function(e){e.stopPropagation();stkStart();});
+    document.getElementById('stk-lobby-btn').addEventListener('click',function(e){e.stopPropagation();stkLobby();});
+    document.getElementById('stk-resume-btn').addEventListener('click',function(e){e.stopPropagation();stkResume();});
+    document.getElementById('stk-pause-lobby-btn').addEventListener('click',function(e){e.stopPropagation();stkLobby();});
+    document.getElementById('stk-pause-btn').addEventListener('click',function(e){
+      e.stopPropagation();
+      if(stkState==='playing') stkPause();
+      else if(stkState==='paused') stkResume();
+    });
+    document.getElementById('stk-canvas').addEventListener('pointerdown',function(e){
+      e.preventDefault();
+      if(stkState==='playing') stkDrop();
+      else if(stkState==='idle') stkStart();
+    });
+    document.addEventListener('keydown',function(e){
+      // Only handle if stack game is visible
+      if(document.getElementById('gameStack').style.display==='none') return;
+      if(e.code==='Space'){
+        e.preventDefault();
+        if(stkState==='playing') stkDrop();
+        else if(stkState==='idle') stkStart();
+        else if(stkState==='paused') stkResume();
+      }
+      if(e.code==='KeyP'||e.code==='Escape'){
+        if(stkState==='playing') stkPause();
+        else if(stkState==='paused') stkResume();
+      }
+    });
+    stkLoop();
+  }
+}
+
+
+// ── FARM CLICKER ──
+var fcInitialized = false;
+var fcFruits = 0, fcTotalFruits = 0, fcClickPower = 1, fcPassiveRate = 0;
+var fcCurrentTier = 0, fcSidebarOpen = false, fcTickRaf = null;
+
+var FC_CROP_TIERS = [
+    {threshold:0,       emoji:'🍊', name:'Common Crop',       cls:''},
+    {threshold:100,     emoji:'🍎', name:'Fresh Apple',        cls:''},
+    {threshold:500,     emoji:'🍇', name:'Purple Grapes',      cls:''},
+    {threshold:2000,    emoji:'🥝', name:'Kiwi Harvest',       cls:''},
+    {threshold:8000,    emoji:'🍍', name:'Tropical Pineapple', cls:''},
+    {threshold:30000,   emoji:'🥭', name:'Exotic Mango',       cls:''},
+    {threshold:120000,  emoji:'🌹', name:'Rare Rose Fruit',    cls:''},
+    {threshold:500000,  emoji:'🫐', name:'Ancient Blueberry',  cls:''},
+    {threshold:2000000, emoji:'🍄', name:'Mystic Mushroom',    cls:''},
+    {threshold:1e7,     emoji:'🍈', name:'Ancient Melon',      cls:''},
+    {threshold:5e7,     emoji:'🫒', name:'Legendary Olive',    cls:''},
+];
+
+var FC_UPGRADES = [
+    {id:'hands1',  icon:'👐',name:'Better Hands',     desc:'+1 per click',   base:10,    mult:1.5, cnt:0, max:20, fn:function(){fcClickPower+=1;}},
+    {id:'basket',  icon:'🧺',name:'Fruit Basket',     desc:'+1/sec',         base:25,    mult:1.6, cnt:0, max:20, fn:function(){fcPassiveRate+=1;}},
+    {id:'gloves',  icon:'🧤',name:'Harvest Gloves',   desc:'+2 per click',   base:80,    mult:1.55,cnt:0, max:15, fn:function(){fcClickPower+=2;}},
+    {id:'tree',    icon:'🌳',name:'Fruit Tree',       desc:'+5/sec',         base:150,   mult:1.65,cnt:0, max:18, fn:function(){fcPassiveRate+=5;}},
+    {id:'golden',  icon:'✨',name:'Golden Touch',     desc:'+5 per click',   base:300,   mult:1.8, cnt:0, max:12, fn:function(){fcClickPower+=5;}},
+    {id:'fert',    icon:'🌱',name:'Fertilizer',       desc:'Click x1.5',     base:500,   mult:3.0, cnt:0, max:5,  fn:function(){fcClickPower=Math.ceil(fcClickPower*1.5);}},
+    {id:'tractor', icon:'🚜',name:'Tractor',          desc:'+20/sec',        base:800,   mult:1.7, cnt:0, max:15, fn:function(){fcPassiveRate+=20;}},
+    {id:'magic',   icon:'🪄',name:'Magic Wand',       desc:'+15 per click',  base:2500,  mult:2.0, cnt:0, max:10, fn:function(){fcClickPower+=15;}},
+    {id:'rain',    icon:'🌧️',name:'Rain Dance',       desc:'Passive x1.5',  base:3000,  mult:3.0, cnt:0, max:5,  fn:function(){fcPassiveRate=Math.ceil(fcPassiveRate*1.5);}},
+    {id:'orchard', icon:'🌲',name:'Orchard',          desc:'+60/sec',        base:4000,  mult:1.75,cnt:0, max:12, fn:function(){fcPassiveRate+=60;}},
+    {id:'laser',   icon:'⚡',name:'Lightning Harvest',desc:'+50 per click',  base:20000, mult:2.1, cnt:0, max:8,  fn:function(){fcClickPower+=50;}},
+    {id:'factory', icon:'🏭',name:'Juice Factory',    desc:'+200/sec',       base:25000, mult:1.85,cnt:0, max:10, fn:function(){fcPassiveRate+=200;}},
+    {id:'sun',     icon:'☀️',name:'Eternal Sun',      desc:'Click x2',       base:50000, mult:4.0, cnt:0, max:3,  fn:function(){fcClickPower*=2;}},
+    {id:'drone',   icon:'🚁',name:'Harvest Drone',    desc:'+600/sec',       base:150000,mult:1.9, cnt:0, max:8,  fn:function(){fcPassiveRate+=600;}},
+];
+
+function fcCost(u){ return Math.floor(u.base * Math.pow(u.mult, u.cnt)); }
+function fcFmt(n){
+    if(n>=1e12) return (n/1e12).toFixed(1)+'T';
+    if(n>=1e9)  return (n/1e9).toFixed(1)+'B';
+    if(n>=1e6)  return (n/1e6).toFixed(1)+'M';
+    if(n>=1e3)  return (n/1e3).toFixed(1)+'K';
+    return Math.floor(n).toString();
+}
+
+function fcUpdateScore(){
+    var s=document.getElementById('fc-scoreVal'); if(s) s.textContent=fcFmt(fcFruits);
+    var p=document.getElementById('fc-perSec'); if(p) p.textContent=(fcPassiveRate>0?fcFmt(fcPassiveRate)+'/sec':'0/sec');
+    fcCheckTier();
+}
+
+function fcCheckTier(){
+    var ni=0;
+    for(var i=FC_CROP_TIERS.length-1;i>=0;i--){ if(fcTotalFruits>=FC_CROP_TIERS[i].threshold){ni=i;break;} }
+    if(ni!==fcCurrentTier){
+        fcCurrentTier=ni;
+        var tier=FC_CROP_TIERS[ni];
+        var btn=document.getElementById('fc-fruitBtn'); if(btn) btn.textContent=tier.emoji;
+        var lbl=document.getElementById('fc-tierLabel'); if(lbl) lbl.textContent=tier.name;
+        // toast
+        var toast=document.createElement('div');
+        toast.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);background:rgba(10,40,80,0.92);border:1px solid #FFD166;border-radius:16px;padding:10px 22px;font-family:Fredoka One,cursive;font-size:1rem;color:#FFD166;z-index:9999;pointer-events:none;white-space:nowrap;';
+        toast.textContent=tier.emoji+' New crop unlocked!';
+        document.body.appendChild(toast);
+        setTimeout(function(){toast.remove();},2400);
+    }
+}
+
+function fcRenderUpgrades(){
+    FC_UPGRADES.forEach(function(u){
+        var card=document.getElementById('fc-upg-'+u.id); if(!card) return;
+        var cstEl=document.getElementById('fc-cst-'+u.id);
+        var c=fcCost(u), maxed=u.cnt>=u.max;
+        if(maxed){
+            card.style.opacity='0.35'; card.style.cursor='default';
+            card.style.borderColor='rgba(255,255,255,0.1)';
+            if(cstEl){cstEl.textContent='MAX';cstEl.style.color='rgba(255,255,255,0.3)';}
+        } else {
+            var can=fcFruits>=c;
+            card.style.opacity='1'; card.style.cursor='pointer';
+            card.style.borderColor=can?'#06D6A0':'rgba(255,255,255,0.2)';
+            card.style.background=can?'rgba(6,214,160,0.15)':'rgba(255,255,255,0.1)';
+            if(cstEl){cstEl.textContent='🍊 '+fcFmt(c);cstEl.style.color=can?'#FFD166':'rgba(255,255,255,0.3)';}
+        }
+    });
+}
+
+function fcHarvest(e){
+    fcFruits+=fcClickPower; fcTotalFruits+=fcClickPower;
+    fcUpdateScore(); fcRenderUpgrades();
+    // pop
+    var pop=document.createElement('div');
+    pop.style.cssText='position:fixed;font-family:Fredoka One,cursive;font-size:1.5rem;color:#FFD166;text-shadow:0 2px 6px rgba(0,0,0,0.3);pointer-events:none;z-index:9999;animation:popUp 0.9s ease-out forwards;';
+    pop.textContent='+'+fcFmt(fcClickPower);
+    var x=e&&e.clientX!==undefined?e.clientX:window.innerWidth/2;
+    var y=e&&e.clientY!==undefined?e.clientY:window.innerHeight/2;
+    pop.style.left=(x-20)+'px'; pop.style.top=(y-20)+'px';
+    document.body.appendChild(pop);
+    setTimeout(function(){pop.remove();},900);
+}
+
+function fcToggleSidebar(){
+    fcSidebarOpen=!fcSidebarOpen;
+    var sb=document.getElementById('fc-sidebar');
+    var arr=document.getElementById('fc-toggleArrow');
+    if(sb) sb.style.transform=fcSidebarOpen?'translateX(0)':'translateX(100%)';
+    if(arr) arr.textContent=fcSidebarOpen?'▶':'◀';
+    fcRenderUpgrades();
+}
+
+function fcStartTick(){
+    if(fcTickRaf) cancelAnimationFrame(fcTickRaf);
+    var last=performance.now();
+    function tick(now){
+        if(document.getElementById('gameFarm').style.display==='none'){fcTickRaf=null;return;}
+        var dt=(now-last)/1000; last=now;
+        if(fcPassiveRate>0){
+            fcFruits+=fcPassiveRate*dt; fcTotalFruits+=fcPassiveRate*dt;
+            fcUpdateScore(); fcRenderUpgrades();
+        }
+        fcTickRaf=requestAnimationFrame(tick);
+    }
+    fcTickRaf=requestAnimationFrame(tick);
+}
+
+
+function initFarm(){
+    if(!fcInitialized){
+        fcInitialized=true;
+        // Add font
+        if(!document.querySelector('link[href*="Fredoka"]')){
+            var lnk=document.createElement('link');
+            lnk.rel='stylesheet';
+            lnk.href='https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap';
+            document.head.appendChild(lnk);
+        }
+        // Add keyframes
+        if(!document.getElementById('fc-style')){
+            var st=document.createElement('style');
+            st.id='fc-style';
+            st.textContent='@keyframes fcFloat{from{transform:translateY(500px) rotate(0deg);opacity:0.08;}to{transform:translateY(-100px) rotate(360deg);opacity:0;}} @keyframes fcPop{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-60px) scale(1.3);}}';
+            document.head.appendChild(st);
+        }
+        // BG deco
+        var deco=document.getElementById('fc-bgDeco');
+        if(deco){
+            var emojis=['🍓','🍇','🍊','🍋','🍎','🍑','🍒','🥝','🌾','🌻'];
+            for(var i=0;i<10;i++){
+                var s=document.createElement('span');
+                s.textContent=emojis[i%emojis.length];
+                s.style.cssText='position:absolute;font-size:'+(1.2+Math.random()*1.5)+'rem;left:'+(Math.random()*90)+'%;bottom:-50px;animation:fcFloat '+(14+Math.random()*12)+'s linear '+(Math.random()*15)+'s infinite;';
+                deco.appendChild(s);
+            }
+        }
+        // Build upgrade grid
+        var grid=document.getElementById('fc-upgradeGrid');
+        if(grid){
+            FC_UPGRADES.forEach(function(u){
+                var card=document.createElement('div');
+                card.id='fc-upg-'+u.id;
+                card.style.cssText='background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background 0.15s;';
+                card.innerHTML='<div style="font-size:1.3rem;flex-shrink:0;">'+u.icon+'</div>'+
+                    '<div style="flex:1;min-width:0;">'+
+                    '<div style="font-weight:700;font-size:0.75rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+u.name+'</div>'+
+                    '<div style="font-size:0.6rem;opacity:0.6;color:#fff;">'+u.desc+'</div>'+
+                    '<div id="fc-cst-'+u.id+'" style="font-size:0.65rem;color:#FFD166;margin-top:2px;">🍊 '+fcFmt(fcCost(u))+'</div>'+
+                    '</div>';
+                card.addEventListener('click',function(){
+                    if(u.cnt>=u.max) return;
+                    var c=fcCost(u); if(fcFruits<c) return;
+                    fcFruits-=c; u.cnt++; u.fn(); fcUpdateScore(); fcRenderUpgrades();
+                });
+                grid.appendChild(card);
+            });
+        }
+        // Harvest button
+        var btn=document.getElementById('fc-fruitBtn');
+        if(btn){
+            btn.addEventListener('click',function(e){fcHarvest(e);});
+            btn.addEventListener('touchstart',function(e){e.preventDefault();btn.style.transform='scale(0.93) translateY(4px)';},{passive:false});
+            btn.addEventListener('touchend',function(e){e.preventDefault();btn.style.transform='';fcHarvest(e.changedTouches[0]);});
+        }
+    }
+    fcUpdateScore();
+    fcRenderUpgrades();
+    fcStartTick();
+}
+
+
 renderStore();
 renderLibrary();
 </script>
 </body>
 </html>
+
