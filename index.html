@@ -1,4 +1,3 @@
-[index (17).html](https://github.com/user-attachments/files/28432633/index.17.html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -368,455 +367,7 @@
   </div>
 </div><!-- /cabinet -->
 
-<script>
-const canvas = document.getElementById('stk-canvas');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
 
-const BLOCK_H = 28;
-const VISIBLE = 12;
-const BASE_SPD = 2.4;
-const SPD_INC = 0.13;
-
-// Arcade color palettes: [fill, glow/outline]
-const PALETTES = [
-  ['#0d1f3c', '#00dcff'],
-  ['#1a0d3c', '#b44aff'],
-  ['#0d3c1a', '#00ff88'],
-  ['#3c0d1a', '#ff4466'],
-  ['#3c2a0d', '#ffaa00'],
-  ['#0d2e3c', '#00ccff'],
-  ['#1f3c0d', '#aaff00'],
-  ['#3c0d30', '#ff44cc'],
-];
-
-function getPalette(i) { return PALETTES[i % PALETTES.length]; }
-
-// State
-let state = 'idle'; // idle | playing | paused | over
-let score = 0;
-let bestScore = parseInt(localStorage.getItem('stackBest') || '0');
-let blocks = [], moving = null;
-let stackOffset = 0, targetOffset = 0;
-let fallingPieces = [];
-let perfectStreak = 0;
-let comboTimer = null;
-let animId = null;
-
-// Update best score displays
-function updateBestDisplays() {
-  document.getElementById('stk-best-score-start').textContent = bestScore;
-  document.getElementById('stk-best-score-over').textContent = bestScore;
-}
-updateBestDisplays();
-
-// ── Overlays ──────────────────────────────────────────────
-function showOverlay(id) {
-  ['start-overlay','over-overlay','pause-overlay'].forEach(n => {
-    document.getElementById(n).classList.toggle('hidden', n !== id);
-  });
-}
-function hideAllOverlays() {
-  ['start-overlay','over-overlay','pause-overlay'].forEach(n =>
-    document.getElementById(n).classList.add('hidden'));
-}
-
-// ── Game init ─────────────────────────────────────────────
-function initGame() {
-  score = 0; perfectStreak = 0;
-  blocks = []; fallingPieces = [];
-  stackOffset = 0; targetOffset = 0;
-  setScore(0);
-  setCombo('');
-
-  const baseW = 200, baseX = (W - baseW) / 2;
-  for (let i = 0; i < 3; i++) {
-    const [fill, glow] = getPalette(i);
-    blocks.push({ x: baseX, w: baseW, y: H - BLOCK_H * (i + 1), fill, glow });
-  }
-  spawnMoving();
-}
-
-function spawnMoving() {
-  const last = blocks[blocks.length - 1];
-  const [fill, glow] = getPalette(blocks.length);
-  const spd = (BASE_SPD + SPD_INC * Math.min(score, 35)) * (Math.random() < 0.5 ? 1 : -1);
-  moving = { x: spd > 0 ? -last.w : W, w: last.w, y: last.y - BLOCK_H, speed: spd, fill, glow };
-}
-
-// ── Drop logic ────────────────────────────────────────────
-function drop() {
-  if (state !== 'playing') return;
-  const last = blocks[blocks.length - 1];
-  const cur = moving;
-
-  const oStart = Math.max(cur.x, last.x);
-  const oEnd   = Math.min(cur.x + cur.w, last.x + last.w);
-  const oW     = oEnd - oStart;
-
-  if (oW <= 0) {
-    // Completely missed — drop entire block
-    spawnFalling(cur.x, cur.y, cur.w, cur.fill, cur.glow);
-    triggerGameOver();
-    return;
-  }
-
-  const PERF = 7;
-  let fx = oStart, fw = oW;
-  if (Math.abs(oW - last.w) <= PERF) {
-    fx = last.x; fw = last.w;
-    perfectStreak++;
-    setCombo(perfectStreak >= 3 ? `${perfectStreak}✕ PERFECT` : 'PERFECT');
-  } else {
-    perfectStreak = 0;
-    setCombo('');
-    // Spawn the cut-off piece falling
-    if (cur.x < last.x) {
-      // overhang on the left
-      spawnFalling(cur.x, cur.y, last.x - cur.x, cur.fill, cur.glow);
-    } else {
-      // overhang on the right
-      spawnFalling(last.x + last.w, cur.y, (cur.x + cur.w) - (last.x + last.w), cur.fill, cur.glow);
-    }
-  }
-
-  blocks.push({ x: fx, w: fw, y: cur.y, fill: cur.fill, glow: cur.glow });
-  score++;
-  setScore(score);
-  if (blocks.length > VISIBLE) targetOffset = (blocks.length - VISIBLE) * BLOCK_H;
-  spawnMoving();
-}
-
-// ── Falling pieces ────────────────────────────────────────
-function spawnFalling(x, y, w, fill, glow) {
-  fallingPieces.push({
-    x, y, w, fill, glow,
-    vy: 2,
-    vx: (Math.random() - 0.5) * 3,
-    rot: 0,
-    vrot: (Math.random() - 0.5) * 0.15,
-    alpha: 1
-  });
-}
-
-function updateFalling() {
-  fallingPieces = fallingPieces.filter(p => p.alpha > 0.02);
-  fallingPieces.forEach(p => {
-    p.vy += 0.4;
-    p.x  += p.vx;
-    p.y  += p.vy;
-    p.rot += p.vrot;
-    p.alpha *= 0.94;
-  });
-}
-
-// ── Score / combo UI ──────────────────────────────────────
-function setScore(n) {
-  const el = document.getElementById('stk-score-display');
-  el.textContent = n;
-  el.classList.remove('pop');
-  void el.offsetWidth;
-  el.classList.add('pop');
-  setTimeout(() => el.classList.remove('pop'), 80);
-}
-
-function setCombo(text) {
-  clearTimeout(comboTimer);
-  const el = document.getElementById('stk-combo-text');
-  el.textContent = text;
-  if (text) comboTimer = setTimeout(() => { el.textContent = ''; }, 700);
-}
-
-// ── Game over ─────────────────────────────────────────────
-function triggerGameOver() {
-  state = 'over';
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('stackBest', bestScore);
-    updateBestDisplays();
-  }
-  document.getElementById('stk-final-score').textContent = score;
-  setTimeout(() => showOverlay('over-overlay'), 400);
-}
-
-// ── Game start / lobby ────────────────────────────────────
-function startGame() {
-  state = 'playing';
-  hideAllOverlays();
-  initGame();
-}
-
-function goLobby() {
-  state = 'idle';
-  showOverlay('start-overlay');
-}
-
-function pauseGame() {
-  if (state !== 'playing') return;
-  state = 'paused';
-  showOverlay('pause-overlay');
-  document.getElementById('stk-pause-btn').textContent = '▶';
-}
-
-function resumeGame() {
-  if (state !== 'paused') return;
-  state = 'playing';
-  hideAllOverlays();
-  document.getElementById('stk-pause-btn').textContent = '⏸';
-}
-
-// ── Draw ──────────────────────────────────────────────────
-function drawBlock(b, offsetY, alpha) {
-  const y = b.y + offsetY;
-  if (y > H + BLOCK_H || y + BLOCK_H < -BLOCK_H) return;
-
-  ctx.save();
-  ctx.globalAlpha = alpha;
-
-  // Fill with slight gradient
-  const grad = ctx.createLinearGradient(b.x, y, b.x, y + BLOCK_H);
-  grad.addColorStop(0, lighten(b.fill, 0.18));
-  grad.addColorStop(1, b.fill);
-  ctx.fillStyle = grad;
-  ctx.shadowColor = b.glow;
-  ctx.shadowBlur = 14;
-  ctx.fillRect(b.x + 1, y + 1, b.w - 2, BLOCK_H - 2);
-
-  // Glowing outline
-  ctx.strokeStyle = b.glow;
-  ctx.lineWidth = 1.5;
-  ctx.shadowColor = b.glow;
-  ctx.shadowBlur = 18;
-  ctx.strokeRect(b.x + 1, y + 1, b.w - 2, BLOCK_H - 2);
-
-  // Inner shine
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = 'rgba(255,255,255,0.07)';
-  ctx.fillRect(b.x + 2, y + 2, b.w - 4, 5);
-
-  ctx.restore();
-}
-
-function drawFalling(p) {
-  ctx.save();
-  ctx.globalAlpha = p.alpha;
-  const cx = p.x + p.w / 2, cy = p.y + BLOCK_H / 2;
-  ctx.translate(cx, cy);
-  ctx.rotate(p.rot);
-
-  ctx.shadowColor = p.glow;
-  ctx.shadowBlur = 12;
-  ctx.fillStyle = p.fill;
-  ctx.fillRect(-p.w/2, -BLOCK_H/2, p.w, BLOCK_H);
-
-  ctx.strokeStyle = p.glow;
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(-p.w/2, -BLOCK_H/2, p.w, BLOCK_H);
-  ctx.restore();
-}
-
-function lighten(hex, amt) {
-  const n = parseInt(hex.slice(1), 16);
-  let r = Math.min(255, ((n >> 16) & 0xff) + Math.round(255 * amt));
-  let g = Math.min(255, ((n >> 8)  & 0xff) + Math.round(255 * amt));
-  let b = Math.min(255, ( n        & 0xff) + Math.round(255 * amt));
-  return `rgb(${r},${g},${b})`;
-}
-
-let bgTime = 0;
-
-function drawArcadeBG() {
-  bgTime += 0.012;
-
-  // Deep space base
-  const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0,   '#000008');
-  bg.addColorStop(0.5, '#04020f');
-  bg.addColorStop(1,   '#080418');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
-
-  // --- Perspective grid floor ---
-  const horizon = H * 0.58;
-  const vp = { x: W / 2, y: horizon };
-
-  ctx.save();
-  ctx.strokeStyle = 'rgba(0,180,255,0.18)';
-  ctx.lineWidth = 0.8;
-  ctx.shadowColor = '#00aaff';
-  ctx.shadowBlur = 4;
-
-  // Horizontal grid lines (receding into distance)
-  const lineCount = 14;
-  for (let i = 0; i <= lineCount; i++) {
-    const t = i / lineCount;
-    const ease = t * t;
-    const y = horizon + ease * (H - horizon);
-    const spread = ease * W * 0.9;
-    ctx.globalAlpha = 0.08 + ease * 0.22;
-    ctx.beginPath();
-    ctx.moveTo(vp.x - spread / 2, y);
-    ctx.lineTo(vp.x + spread / 2, y);
-    ctx.stroke();
-  }
-
-  // Vertical grid lines fanning from vanishing point
-  const vLines = 14;
-  ctx.globalAlpha = 1;
-  for (let i = 0; i <= vLines; i++) {
-    const t = i / vLines;
-    const xBottom = W * t;
-    ctx.globalAlpha = 0.06 + Math.abs(t - 0.5) * 0.2;
-    ctx.beginPath();
-    ctx.moveTo(vp.x, horizon);
-    ctx.lineTo(xBottom, H);
-    ctx.stroke();
-  }
-  ctx.restore();
-
-  // --- Scrolling stars ---
-  ctx.save();
-  const starSeed = [
-    [0.12,0.08,1.2],[0.88,0.05,0.9],[0.34,0.18,1.5],[0.67,0.12,1.0],
-    [0.23,0.03,0.7],[0.78,0.22,1.3],[0.45,0.09,1.1],[0.56,0.15,0.8],
-    [0.09,0.25,1.4],[0.91,0.31,1.0],[0.38,0.28,0.6],[0.72,0.07,1.2],
-    [0.15,0.35,0.9],[0.83,0.40,1.1],[0.50,0.33,1.6],[0.29,0.42,0.7],
-    [0.61,0.37,1.3],[0.04,0.44,1.0],[0.96,0.48,0.8],[0.42,0.50,1.2],
-  ];
-  starSeed.forEach(([sx, sy, speed]) => {
-    const x = sx * W;
-    const y = ((sy + bgTime * speed * 0.04) % 0.55) * horizon;
-    const flicker = 0.5 + 0.5 * Math.sin(bgTime * speed * 3 + sx * 10);
-    ctx.globalAlpha = 0.3 + flicker * 0.5;
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = '#aaddff';
-    ctx.shadowBlur = 3;
-    ctx.beginPath();
-    ctx.arc(x, y, 0.9, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  ctx.restore();
-
-  // --- Neon horizon line with pulse ---
-  const pulse = 0.6 + 0.4 * Math.sin(bgTime * 2);
-  ctx.save();
-  ctx.globalAlpha = pulse * 0.7;
-  const hLine = ctx.createLinearGradient(0, 0, W, 0);
-  hLine.addColorStop(0,   'transparent');
-  hLine.addColorStop(0.2, '#ff00cc');
-  hLine.addColorStop(0.5, '#ff44ff');
-  hLine.addColorStop(0.8, '#ff00cc');
-  hLine.addColorStop(1,   'transparent');
-  ctx.fillStyle = hLine;
-  ctx.shadowColor = '#ff00ff';
-  ctx.shadowBlur = 12;
-  ctx.fillRect(0, horizon - 1, W, 2);
-  ctx.globalAlpha = pulse * 0.25;
-  ctx.fillRect(0, horizon - 4, W, 8);
-  ctx.restore();
-
-  // --- Scanlines overlay ---
-  ctx.fillStyle = 'rgba(0,0,0,0.10)';
-  for (let y = 0; y < H; y += 3) ctx.fillRect(0, y, W, 1);
-
-  // --- Vignette ---
-  const vignette = ctx.createRadialGradient(W/2, H/2, W*0.25, W/2, H/2, W*0.8);
-  vignette.addColorStop(0, 'transparent');
-  vignette.addColorStop(1, 'rgba(0,0,0,0.55)');
-  ctx.fillStyle = vignette;
-  ctx.fillRect(0, 0, W, H);
-}
-
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-  drawArcadeBG();
-
-  // Smooth scroll
-  stackOffset += (targetOffset - stackOffset) * 0.11;
-
-  // Stacked blocks
-  blocks.forEach((b, i) => {
-    const alpha = Math.min(1, 0.35 + (i / blocks.length) * 0.65);
-    drawBlock(b, stackOffset, alpha);
-  });
-
-  // Moving block
-  if (moving && state === 'playing') {
-    moving.x += moving.speed;
-    if (moving.x + moving.w > W + 30) moving.speed = -Math.abs(moving.speed);
-    if (moving.x < -30) moving.speed =  Math.abs(moving.speed);
-
-    // Guide lines
-    const last = blocks[blocks.length - 1];
-    ctx.save();
-    ctx.setLineDash([3, 7]);
-    ctx.strokeStyle = `${last.glow}22`;
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(last.x, 0); ctx.lineTo(last.x, H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(last.x + last.w, 0); ctx.lineTo(last.x + last.w, H); ctx.stroke();
-    ctx.restore();
-
-    drawBlock(moving, stackOffset, 0.95);
-  }
-
-  // Falling pieces
-  updateFalling();
-  fallingPieces.forEach(drawFalling);
-}
-
-function loop() {
-  draw();
-  animId = requestAnimationFrame(loop);
-}
-
-// ── Input ─────────────────────────────────────────────────
-document.getElementById('stk-start-btn').addEventListener('click', e => {
-  e.stopPropagation(); startGame();
-});
-document.getElementById('stk-again-btn').addEventListener('click', e => {
-  e.stopPropagation(); startGame();
-});
-document.getElementById('stk-lobby-btn').addEventListener('click', e => {
-  e.stopPropagation(); goLobby();
-});
-document.getElementById('stk-resume-btn').addEventListener('click', e => {
-  e.stopPropagation(); resumeGame();
-});
-document.getElementById('stk-pause-lobby-btn').addEventListener('click', e => {
-  e.stopPropagation(); goLobby();
-});
-document.getElementById('stk-pause-btn').addEventListener('click', e => {
-  e.stopPropagation();
-  if (state === 'playing') pauseGame();
-  else if (state === 'paused') resumeGame();
-});
-
-// Keyboard
-document.addEventListener('keydown', e => {
-  if (e.code === 'Space') {
-    e.preventDefault();
-    if (state === 'playing') drop();
-    else if (state === 'idle') startGame();
-    else if (state === 'paused') resumeGame();
-  }
-  if (e.code === 'Escape' || e.code === 'KeyP') {
-    if (state === 'playing') pauseGame();
-    else if (state === 'paused') resumeGame();
-  }
-});
-
-// Touch / click on canvas
-function handleAction(e) {
-  // Don't fire if tapping a button
-  if (e.target !== canvas) return;
-  e.preventDefault();
-  if (state === 'playing') drop();
-}
-
-canvas.addEventListener('pointerdown', handleAction);
-
-loop();
-</script>
         </div>
         
         <!-- STACK -->
@@ -2831,13 +2382,17 @@ function gdSetupTowerBtns(){
 
 
 
+
 // ── STACK GAME ──
 var stkLoopStarted = false;
 function initStack(){
     document.getElementById('stk-start-overlay').classList.remove('hidden');
     document.getElementById('stk-over-overlay').classList.add('hidden');
     document.getElementById('stk-pause-overlay').classList.add('hidden');
-    if(!stkLoopStarted){ stkLoopStarted=true; (function(){
+    if(!stkLoopStarted){
+        stkLoopStarted=true;
+        (function(){
+
 var stk_canvas = document.getElementById('stk-stk_canvas');
 var stk_ctx = stk_canvas.getContext('2d');
 var stk_W = stk_canvas.width, stk_H = stk_canvas.height;
@@ -2864,13 +2419,13 @@ function getPalette(i) { return PALETTES[i % PALETTES.length]; }
 // State
 var stk_state = 'idle'; // idle | playing | paused | over
 var stk_score = 0;
-var bestScore = parseInt(localStorage.getItem('stk_stackBest') || '0');
+var bestScore = parseInt(localStorage.getItem('stackBest') || '0');
 var stk_blocks = [], moving = null;
 var stackOffset = 0, targetOffset = 0;
 var fallingPieces = [];
 var perfectStreak = 0;
 var comboTimer = null;
-var animId = null;
+var stk_animId = null;
 
 // Update best stk_score displays
 function updateBestDisplays() {
@@ -3001,7 +2556,7 @@ function triggerGameOver() {
   stk_state = 'over';
   if (stk_score > bestScore) {
     bestScore = stk_score;
-    localStorage.setItem('stk_stackBest', bestScore);
+    localStorage.setItem('stackBest', bestScore);
     updateBestDisplays();
   }
   document.getElementById('stk-final-stk_score').textContent = stk_score;
@@ -3235,7 +2790,7 @@ function draw() {
 
 function loop() {
   draw();
-  animId = requestAnimationFrame(loop);
+  stk_animId = requestAnimationFrame(loop);
 }
 
 // ── Input ─────────────────────────────────────────────────
@@ -3285,7 +2840,9 @@ function handleAction(e) {
 stk_canvas.addEventListener('pointerdown', handleAction);
 
 loop();
-})(); }
+
+        })();
+    }
 }
 
 renderStore();
