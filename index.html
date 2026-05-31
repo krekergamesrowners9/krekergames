@@ -373,87 +373,15 @@
         <!-- STACK -->
         <div id="gameStack" style="display:none;overflow:hidden;border-radius:0 0 16px 16px;">
             <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap');
+#gameStack #gameStack 900&family=Share+Tech+Mono&display=swap');
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    background: #0a0a0a;
-    font-family: 'Orbitron', monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
-    color: #fff;
-    touch-action: none;
-    /* Cabinet wood-grain texture via gradient */
-    background-image:
-      repeating-linear-gradient(
-        92deg,
-        transparent,
-        transparent 2px,
-        rgba(255,255,255,0.012) 2px,
-        rgba(255,255,255,0.012) 4px
-      ),
-      repeating-linear-gradient(
-        180deg,
-        transparent,
-        transparent 6px,
-        rgba(0,0,0,0.15) 6px,
-        rgba(0,0,0,0.15) 7px
-      ),
-      radial-gradient(ellipse at 50% 0%, #1a0a00 0%, #0a0500 40%, #050505 100%);
-  }
-
-  /* Arcade cabinet shell */
-  #stk-cabinet {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(180deg, #1c1008 0%, #120b05 40%, #0e0805 100%);
-    border-radius: 18px 18px 8px 8px;
-    padding: 18px 22px 24px;
-    box-shadow:
-      0 0 0 2px #2a1a08,
-      0 0 0 4px #1a0e04,
-      0 4px 0 6px #0a0602,
-      6px 0 24px rgba(0,0,0,0.8),
-      -6px 0 24px rgba(0,0,0,0.8),
-      0 12px 60px rgba(0,0,0,0.9),
-      inset 0 1px 0 rgba(255,180,60,0.12),
-      inset 2px 0 8px rgba(0,0,0,0.5),
-      inset -2px 0 8px rgba(0,0,0,0.5);
-  }
-
-  /* Glowing marquee header */
-  #stk-marquee {
-    width: 100%;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 8px;
-    color: #ffcc44;
-    text-shadow: 0 0 8px #ffcc44, 0 0 20px #ff8800, 0 0 40px rgba(255,136,0,0.4);
-    background: linear-gradient(180deg, #1a0e00, #0e0800);
-    border: 1px solid #2a1800;
-    border-bottom: none;
-    padding: 8px 0 6px;
-    margin-bottom: 12px;
-    border-radius: 6px 6px 0 0;
-    box-shadow: 0 0 16px rgba(255,136,0,0.2), inset 0 1px 0 rgba(255,200,80,0.1);
-    animation: marqueeGlow 2.5s ease-in-out infinite alternate;
-  }
-
-  @keyframes marqueeGlow {
+  *{ margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+@keyframes marqueeGlow {
     from { text-shadow: 0 0 8px #ffcc44, 0 0 20px #ff8800, 0 0 40px rgba(255,136,0,0.3); }
-    to   { text-shadow: 0 0 12px #ffe066, 0 0 30px #ffaa00, 0 0 60px rgba(255,160,0,0.6); }
+#gameStack to{ text-shadow: 0 0 12px #ffe066, 0 0 30px #ffaa00, 0 0 60px rgba(255,160,0,0.6); }
   }
-
-  /* Side panel decorative strips */
-  #stk-cabinet::before, #stk-cabinet::after {
+#gameStack /* Side panel decorative strips */
+  #stk-cabinet::before, #gameStack #stk-cabinet::after{
     content: '';
     position: absolute;
     top: 60px; bottom: 20px;
@@ -469,11 +397,10 @@
     border-radius: 3px;
     box-shadow: 0 0 8px rgba(255,100,0,0.4);
   }
-  #stk-cabinet::before { left: 6px; }
-  #stk-cabinet::after  { right: 6px; }
-
-  /* Screen bezel */
-  #stk-screen-bezel {
+#gameStack #gameStack #stk-cabinet::before{ left: 6px; }
+#gameStack #gameStack #stk-cabinet::after{ right: 6px; }
+#gameStack /* Screen bezel */
+  #stk-screen-bezel{
     background: #0a0805;
     border-radius: 6px;
     padding: 12px 12px 14px;
@@ -484,9 +411,8 @@
       inset 0 0 4px rgba(0,220,255,0.06);
     position: relative;
   }
-
-  /* Screen glow halo */
-  #stk-screen-bezel::after {
+#gameStack /* Screen glow halo */
+  #stk-screen-bezel::after{
     content: '';
     position: absolute;
     inset: -6px;
@@ -494,17 +420,15 @@
     box-shadow: 0 0 24px rgba(0,180,255,0.12), 0 0 60px rgba(0,100,200,0.08);
     pointer-events: none;
   }
-
-  #stk-game-container {
+#gameStack #gameStack #stk-game-container{
     position: relative;
     width: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-
-  /* Bottom controls panel */
-  #stk-controls-panel {
+#gameStack /* Bottom controls panel */
+  #stk-controls-panel{
     width: 100%;
     display: flex;
     justify-content: center;
@@ -513,24 +437,22 @@
     margin-top: 14px;
     padding: 0 8px;
   }
-
-  .ctrl-dot {
+#gameStack #gameStack .ctrl-dot{
     width: 22px; height: 22px;
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 8px currentColor;
   }
-  .ctrl-dot.red   { background: radial-gradient(circle at 40% 35%, #ff6655, #cc1100); color: #ff3311; }
-  .ctrl-dot.blue  { background: radial-gradient(circle at 40% 35%, #44aaff, #0044cc); color: #2288ff; }
-  .ctrl-dot.yellow{ background: radial-gradient(circle at 40% 35%, #ffee44, #cc9900); color: #ffcc00; }
-
-  .ctrl-stick {
+#gameStack #gameStack .ctrl-dot.red{ background: radial-gradient(circle at 40% 35%, #ff6655, #cc1100); color: #ff3311; }
+#gameStack #gameStack .ctrl-dot.blue{ background: radial-gradient(circle at 40% 35%, #44aaff, #0044cc); color: #2288ff; }
+#gameStack #gameStack .ctrl-dot.yellow{ background: radial-gradient(circle at 40% 35%, #ffee44, #cc9900); color: #ffcc00; }
+#gameStack #gameStack .ctrl-stick{
     width: 18px; height: 36px;
     background: linear-gradient(180deg, #333 0%, #111 100%);
     border-radius: 4px 4px 8px 8px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.7), inset 1px 0 0 rgba(255,255,255,0.1);
     position: relative;
   }
-  .ctrl-stick::before {
+#gameStack #gameStack .ctrl-stick::before{
     content: '';
     position: absolute;
     top: -6px; left: 50%; transform: translateX(-50%);
@@ -539,8 +461,7 @@
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0,0,0,0.6);
   }
-
-  #stk-hud {
+#gameStack #gameStack #stk-hud{
     width: 100%;
     display: flex;
     align-items: flex-start;
@@ -548,8 +469,7 @@
     margin-bottom: 8px;
     padding: 0 2px;
   }
-
-  #stk-score-display {
+#gameStack #gameStack #stk-score-display{
     font-size: 56px;
     font-weight: 900;
     color: #fff;
@@ -557,10 +477,8 @@
     text-shadow: 0 0 20px rgba(0,220,255,0.6), 0 0 40px rgba(0,220,255,0.3);
     transition: transform 0.08s ease;
   }
-
-  #stk-score-display.pop { transform: scale(1.15); }
-
-  #stk-combo-text {
+#gameStack #gameStack #stk-score-display.pop{ transform: scale(1.15); }
+#gameStack #gameStack #stk-combo-text{
     font-family: 'Share Tech Mono', monospace;
     font-size: 10px;
     letter-spacing: 3px;
@@ -569,8 +487,7 @@
     text-shadow: 0 0 8px #00ffaa;
     margin-top: 4px;
   }
-
-  #stk-pause-btn {
+#gameStack #gameStack #stk-pause-btn{
     background: none;
     border: 1px solid rgba(0,220,255,0.3);
     color: rgba(0,220,255,0.7);
@@ -589,28 +506,24 @@
     -webkit-user-select: none;
     user-select: none;
   }
-
-  #stk-pause-btn:hover, #stk-pause-btn:active {
+#gameStack #gameStack #stk-pause-btn:hover, #gameStack #gameStack #stk-pause-btn:active{
     border-color: #00dcff;
     color: #00dcff;
     box-shadow: 0 0 12px rgba(0,220,255,0.4);
   }
-
-  .canvas-wrap {
+#gameStack #gameStack .canvas-wrap{
     position: relative;
     width: 320px;
     height: 480px;
   }
-
-  canvas {
+#gameStack #gameStack canvas{
     display: block;
     border-radius: 3px;
     border: 1px solid rgba(0,220,255,0.15);
     box-shadow: 0 0 30px rgba(0,220,255,0.08), inset 0 0 60px rgba(0,0,0,0.5);
   }
-
-  /* Overlay shared styles */
-  .overlay {
+#gameStack /* Overlay shared styles */
+  .overlay{
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     display: flex;
@@ -622,47 +535,40 @@
     transition: opacity 0.25s;
     z-index: 10;
   }
-
-  .overlay.hidden { opacity: 0; pointer-events: none; }
-
-  .ov-title {
+#gameStack #gameStack .overlay.hidden{ opacity: 0; pointer-events: none; }
+#gameStack #gameStack .ov-title{
     font-size: 32px;
     font-weight: 900;
     letter-spacing: 6px;
     margin-bottom: 6px;
     text-shadow: 0 0 20px currentColor;
   }
-
-  .ov-sub {
+#gameStack #gameStack .ov-sub{
     font-family: 'Share Tech Mono', monospace;
     font-size: 10px;
     letter-spacing: 3px;
     color: #444;
     margin-bottom: 28px;
   }
-
-  .ov-score-label {
+#gameStack #gameStack .ov-score-label{
     font-family: 'Share Tech Mono', monospace;
     font-size: 10px;
     letter-spacing: 3px;
     color: #444;
     margin-bottom: 4px;
   }
-
-  .ov-score {
+#gameStack #gameStack .ov-score{
     font-size: 48px;
     font-weight: 900;
     color: #00ffaa;
     text-shadow: 0 0 24px #00ffaa, 0 0 48px rgba(0,255,170,0.4);
     margin-bottom: 28px;
   }
-
-  .btn-row {
+#gameStack #gameStack .btn-row{
     display: flex;
     gap: 10px;
   }
-
-  .arcade-btn {
+#gameStack #gameStack .arcade-btn{
     background: none;
     border: 1px solid rgba(0,220,255,0.35);
     color: rgba(0,220,255,0.85);
@@ -678,38 +584,36 @@
     -webkit-user-select: none;
     user-select: none;
   }
-
-  .arcade-btn:hover, .arcade-btn:active {
+#gameStack #gameStack .arcade-btn:hover, #gameStack #gameStack .arcade-btn:active{
     border-color: #00dcff;
     color: #fff;
     background: rgba(0,220,255,0.08);
     box-shadow: 0 0 16px rgba(0,220,255,0.3), inset 0 0 8px rgba(0,220,255,0.05);
   }
-
-  .arcade-btn.green {
+#gameStack #gameStack .arcade-btn.green{
     border-color: rgba(0,255,170,0.35);
     color: rgba(0,255,170,0.85);
   }
-  .arcade-btn.green:hover, .arcade-btn.green:active {
+#gameStack #gameStack .arcade-btn.green:hover, #gameStack #gameStack .arcade-btn.green:active{
     border-color: #00ffaa;
     color: #fff;
     background: rgba(0,255,170,0.08);
     box-shadow: 0 0 16px rgba(0,255,170,0.3);
   }
-
-  .ov-best {
+#gameStack #gameStack .ov-best{
     font-family: 'Share Tech Mono', monospace;
     font-size: 10px;
     letter-spacing: 2px;
     color: #2a2a3a;
     margin-top: 14px;
   }
-  .ov-best span { color: #444; }
-
-  /* Pause overlay specifics */
-  #stk-pause-overlay .ov-title { color: #00dcff; }
-  #stk-start-overlay .ov-title { color: #00dcff; }
-  #stk-over-overlay .ov-title { color: #ff4466; text-shadow: 0 0 20px #ff4466; }
+#gameStack #gameStack .ov-best span{ color: #444; }
+#gameStack /* Pause overlay specifics */
+  #stk-pause-overlay .ov-title{ color: #00dcff; }
+#gameStack #gameStack #stk-start-overlay .ov-title{ color: #00dcff; }
+#gameStack #gameStack #stk-over-overlay .ov-title{ color: #ff4466; text-shadow: 0 0 20px #ff4466; }
+#gameStack .overlay { position: absolute !important; }
+#gameStack { position: relative; }
 </style>
             <div id="stk-cabinet">
   <div id="stk-marquee">✦ STACK ✦</div>
@@ -769,17 +673,26 @@
 </div><!-- /cabinet -->
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
+var stkLoopStarted = false;
+function initStack(){
+    document.getElementById('stk-start-overlay').classList.remove('hidden');
+    document.getElementById('stk-over-overlay').classList.add('hidden');
+    document.getElementById('stk-pause-overlay').classList.add('hidden');
+    if(!stkLoopStarted){
+        stkLoopStarted = true;
+        (function(){
 
-const BLOCK_H = 28;
-const VISIBLE = 12;
-const BASE_SPD = 2.4;
-const SPD_INC = 0.13;
+var stk_canvas = document.getElementById('stk_canvas');
+var stk_ctx = stk_canvas.getContext('2d');
+var W = stk_canvas.width, H = stk_canvas.height;
+
+var BLOCK_H = 28;
+var VISIBLE = 12;
+var BASE_SPD = 2.4;
+var SPD_INC = 0.13;
 
 // Arcade color palettes: [fill, glow/outline]
-const PALETTES = [
+var PALETTES = [
   ['#0d1f3c', '#00dcff'],
   ['#1a0d3c', '#b44aff'],
   ['#0d3c1a', '#00ff88'],
@@ -793,20 +706,20 @@ const PALETTES = [
 function getPalette(i) { return PALETTES[i % PALETTES.length]; }
 
 // State
-let state = 'idle'; // idle | playing | paused | over
-let score = 0;
-let bestScore = parseInt(localStorage.getItem('stackBest') || '0');
-let blocks = [], moving = null;
-let stackOffset = 0, targetOffset = 0;
-let fallingPieces = [];
-let perfectStreak = 0;
-let comboTimer = null;
-let animId = null;
+var stk_state = 'idle'; // idle | playing | paused | over
+var stk_score = 0;
+var bestScore = parseInt(localStorage.getItem('stackBest') || '0');
+var stk_blocks = [], moving = null;
+var stackOffset = 0, targetOffset = 0;
+var fallingPieces = [];
+var perfectStreak = 0;
+var comboTimer = null;
+var stk_animId = null;
 
-// Update best score displays
+// Update best stk_score displays
 function updateBestDisplays() {
-  document.getElementById('best-score-start').textContent = bestScore;
-  document.getElementById('best-score-over').textContent = bestScore;
+  document.getElementById('best-stk_score-start').textContent = bestScore;
+  document.getElementById('best-stk_score-over').textContent = bestScore;
 }
 updateBestDisplays();
 
@@ -823,36 +736,36 @@ function hideAllOverlays() {
 
 // ── Game init ─────────────────────────────────────────────
 function initGame() {
-  score = 0; perfectStreak = 0;
-  blocks = []; fallingPieces = [];
+  stk_score = 0; perfectStreak = 0;
+  stk_blocks = []; fallingPieces = [];
   stackOffset = 0; targetOffset = 0;
   setScore(0);
   setCombo('');
 
-  const baseW = 200, baseX = (W - baseW) / 2;
-  for (let i = 0; i < 3; i++) {
-    const [fill, glow] = getPalette(i);
-    blocks.push({ x: baseX, w: baseW, y: H - BLOCK_H * (i + 1), fill, glow });
+  var baseW = 200, baseX = (W - baseW) / 2;
+  for (var i = 0; i < 3; i++) {
+    var [fill, glow] = getPalette(i);
+    stk_blocks.push({ x: baseX, w: baseW, y: H - BLOCK_H * (i + 1), fill, glow });
   }
   spawnMoving();
 }
 
 function spawnMoving() {
-  const last = blocks[blocks.length - 1];
-  const [fill, glow] = getPalette(blocks.length);
-  const spd = (BASE_SPD + SPD_INC * Math.min(score, 35)) * (Math.random() < 0.5 ? 1 : -1);
+  var last = stk_blocks[stk_blocks.length - 1];
+  var [fill, glow] = getPalette(stk_blocks.length);
+  var spd = (BASE_SPD + SPD_INC * Math.min(stk_score, 35)) * (Math.random() < 0.5 ? 1 : -1);
   moving = { x: spd > 0 ? -last.w : W, w: last.w, y: last.y - BLOCK_H, speed: spd, fill, glow };
 }
 
 // ── Drop logic ────────────────────────────────────────────
 function drop() {
-  if (state !== 'playing') return;
-  const last = blocks[blocks.length - 1];
-  const cur = moving;
+  if (stk_state !== 'playing') return;
+  var last = stk_blocks[stk_blocks.length - 1];
+  var cur = moving;
 
-  const oStart = Math.max(cur.x, last.x);
-  const oEnd   = Math.min(cur.x + cur.w, last.x + last.w);
-  const oW     = oEnd - oStart;
+  var oStart = Math.max(cur.x, last.x);
+  var oEnd   = Math.min(cur.x + cur.w, last.x + last.w);
+  var oW     = oEnd - oStart;
 
   if (oW <= 0) {
     // Completely missed — drop entire block
@@ -861,8 +774,8 @@ function drop() {
     return;
   }
 
-  const PERF = 7;
-  let fx = oStart, fw = oW;
+  var PERF = 7;
+  var fx = oStart, fw = oW;
   if (Math.abs(oW - last.w) <= PERF) {
     fx = last.x; fw = last.w;
     perfectStreak++;
@@ -880,10 +793,10 @@ function drop() {
     }
   }
 
-  blocks.push({ x: fx, w: fw, y: cur.y, fill: cur.fill, glow: cur.glow });
-  score++;
-  setScore(score);
-  if (blocks.length > VISIBLE) targetOffset = (blocks.length - VISIBLE) * BLOCK_H;
+  stk_blocks.push({ x: fx, w: fw, y: cur.y, fill: cur.fill, glow: cur.glow });
+  stk_score++;
+  setScore(stk_score);
+  if (stk_blocks.length > VISIBLE) targetOffset = (stk_blocks.length - VISIBLE) * BLOCK_H;
   spawnMoving();
 }
 
@@ -912,7 +825,7 @@ function updateFalling() {
 
 // ── Score / combo UI ──────────────────────────────────────
 function setScore(n) {
-  const el = document.getElementById('score-display');
+  var el = document.getElementById('stk_score-display');
   el.textContent = n;
   el.classList.remove('pop');
   void el.offsetWidth;
@@ -922,161 +835,161 @@ function setScore(n) {
 
 function setCombo(text) {
   clearTimeout(comboTimer);
-  const el = document.getElementById('combo-text');
+  var el = document.getElementById('combo-text');
   el.textContent = text;
   if (text) comboTimer = setTimeout(() => { el.textContent = ''; }, 700);
 }
 
 // ── Game over ─────────────────────────────────────────────
 function triggerGameOver() {
-  state = 'over';
-  if (score > bestScore) {
-    bestScore = score;
+  stk_state = 'over';
+  if (stk_score > bestScore) {
+    bestScore = stk_score;
     localStorage.setItem('stackBest', bestScore);
     updateBestDisplays();
   }
-  document.getElementById('final-score').textContent = score;
+  document.getElementById('final-stk_score').textContent = stk_score;
   setTimeout(() => showOverlay('over-overlay'), 400);
 }
 
 // ── Game start / lobby ────────────────────────────────────
 function startGame() {
-  state = 'playing';
+  stk_state = 'playing';
   hideAllOverlays();
   initGame();
 }
 
 function goLobby() {
-  state = 'idle';
+  stk_state = 'idle';
   showOverlay('start-overlay');
 }
 
 function pauseGame() {
-  if (state !== 'playing') return;
-  state = 'paused';
+  if (stk_state !== 'playing') return;
+  stk_state = 'paused';
   showOverlay('pause-overlay');
   document.getElementById('pause-btn').textContent = '▶';
 }
 
 function resumeGame() {
-  if (state !== 'paused') return;
-  state = 'playing';
+  if (stk_state !== 'paused') return;
+  stk_state = 'playing';
   hideAllOverlays();
   document.getElementById('pause-btn').textContent = '⏸';
 }
 
 // ── Draw ──────────────────────────────────────────────────
 function drawBlock(b, offsetY, alpha) {
-  const y = b.y + offsetY;
+  var y = b.y + offsetY;
   if (y > H + BLOCK_H || y + BLOCK_H < -BLOCK_H) return;
 
-  ctx.save();
-  ctx.globalAlpha = alpha;
+  stk_ctx.save();
+  stk_ctx.globalAlpha = alpha;
 
   // Fill with slight gradient
-  const grad = ctx.createLinearGradient(b.x, y, b.x, y + BLOCK_H);
+  var grad = stk_ctx.createLinearGradient(b.x, y, b.x, y + BLOCK_H);
   grad.addColorStop(0, lighten(b.fill, 0.18));
   grad.addColorStop(1, b.fill);
-  ctx.fillStyle = grad;
-  ctx.shadowColor = b.glow;
-  ctx.shadowBlur = 14;
-  ctx.fillRect(b.x + 1, y + 1, b.w - 2, BLOCK_H - 2);
+  stk_ctx.fillStyle = grad;
+  stk_ctx.shadowColor = b.glow;
+  stk_ctx.shadowBlur = 14;
+  stk_ctx.fillRect(b.x + 1, y + 1, b.w - 2, BLOCK_H - 2);
 
   // Glowing outline
-  ctx.strokeStyle = b.glow;
-  ctx.lineWidth = 1.5;
-  ctx.shadowColor = b.glow;
-  ctx.shadowBlur = 18;
-  ctx.strokeRect(b.x + 1, y + 1, b.w - 2, BLOCK_H - 2);
+  stk_ctx.strokeStyle = b.glow;
+  stk_ctx.lineWidth = 1.5;
+  stk_ctx.shadowColor = b.glow;
+  stk_ctx.shadowBlur = 18;
+  stk_ctx.strokeRect(b.x + 1, y + 1, b.w - 2, BLOCK_H - 2);
 
   // Inner shine
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = 'rgba(255,255,255,0.07)';
-  ctx.fillRect(b.x + 2, y + 2, b.w - 4, 5);
+  stk_ctx.shadowBlur = 0;
+  stk_ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  stk_ctx.fillRect(b.x + 2, y + 2, b.w - 4, 5);
 
-  ctx.restore();
+  stk_ctx.restore();
 }
 
 function drawFalling(p) {
-  ctx.save();
-  ctx.globalAlpha = p.alpha;
-  const cx = p.x + p.w / 2, cy = p.y + BLOCK_H / 2;
-  ctx.translate(cx, cy);
-  ctx.rotate(p.rot);
+  stk_ctx.save();
+  stk_ctx.globalAlpha = p.alpha;
+  var cx = p.x + p.w / 2, cy = p.y + BLOCK_H / 2;
+  stk_ctx.translate(cx, cy);
+  stk_ctx.rotate(p.rot);
 
-  ctx.shadowColor = p.glow;
-  ctx.shadowBlur = 12;
-  ctx.fillStyle = p.fill;
-  ctx.fillRect(-p.w/2, -BLOCK_H/2, p.w, BLOCK_H);
+  stk_ctx.shadowColor = p.glow;
+  stk_ctx.shadowBlur = 12;
+  stk_ctx.fillStyle = p.fill;
+  stk_ctx.fillRect(-p.w/2, -BLOCK_H/2, p.w, BLOCK_H);
 
-  ctx.strokeStyle = p.glow;
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(-p.w/2, -BLOCK_H/2, p.w, BLOCK_H);
-  ctx.restore();
+  stk_ctx.strokeStyle = p.glow;
+  stk_ctx.lineWidth = 1.5;
+  stk_ctx.strokeRect(-p.w/2, -BLOCK_H/2, p.w, BLOCK_H);
+  stk_ctx.restore();
 }
 
 function lighten(hex, amt) {
-  const n = parseInt(hex.slice(1), 16);
-  let r = Math.min(255, ((n >> 16) & 0xff) + Math.round(255 * amt));
-  let g = Math.min(255, ((n >> 8)  & 0xff) + Math.round(255 * amt));
-  let b = Math.min(255, ( n        & 0xff) + Math.round(255 * amt));
+  var n = parseInt(hex.slice(1), 16);
+  var r = Math.min(255, ((n >> 16) & 0xff) + Math.round(255 * amt));
+  var g = Math.min(255, ((n >> 8)  & 0xff) + Math.round(255 * amt));
+  var b = Math.min(255, ( n        & 0xff) + Math.round(255 * amt));
   return `rgb(${r},${g},${b})`;
 }
 
-let bgTime = 0;
+var bgTime = 0;
 
 function drawArcadeBG() {
   bgTime += 0.012;
 
   // Deep space base
-  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  var bg = stk_ctx.createLinearGradient(0, 0, 0, H);
   bg.addColorStop(0,   '#000008');
   bg.addColorStop(0.5, '#04020f');
   bg.addColorStop(1,   '#080418');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
+  stk_ctx.fillStyle = bg;
+  stk_ctx.fillRect(0, 0, W, H);
 
   // --- Perspective grid floor ---
-  const horizon = H * 0.58;
-  const vp = { x: W / 2, y: horizon };
+  var horizon = H * 0.58;
+  var vp = { x: W / 2, y: horizon };
 
-  ctx.save();
-  ctx.strokeStyle = 'rgba(0,180,255,0.18)';
-  ctx.lineWidth = 0.8;
-  ctx.shadowColor = '#00aaff';
-  ctx.shadowBlur = 4;
+  stk_ctx.save();
+  stk_ctx.strokeStyle = 'rgba(0,180,255,0.18)';
+  stk_ctx.lineWidth = 0.8;
+  stk_ctx.shadowColor = '#00aaff';
+  stk_ctx.shadowBlur = 4;
 
   // Horizontal grid lines (receding into distance)
-  const lineCount = 14;
-  for (let i = 0; i <= lineCount; i++) {
-    const t = i / lineCount;
-    const ease = t * t;
-    const y = horizon + ease * (H - horizon);
-    const spread = ease * W * 0.9;
-    ctx.globalAlpha = 0.08 + ease * 0.22;
-    ctx.beginPath();
-    ctx.moveTo(vp.x - spread / 2, y);
-    ctx.lineTo(vp.x + spread / 2, y);
-    ctx.stroke();
+  var lineCount = 14;
+  for (var i = 0; i <= lineCount; i++) {
+    var t = i / lineCount;
+    var ease = t * t;
+    var y = horizon + ease * (H - horizon);
+    var spread = ease * W * 0.9;
+    stk_ctx.globalAlpha = 0.08 + ease * 0.22;
+    stk_ctx.beginPath();
+    stk_ctx.moveTo(vp.x - spread / 2, y);
+    stk_ctx.lineTo(vp.x + spread / 2, y);
+    stk_ctx.stroke();
   }
 
   // Vertical grid lines fanning from vanishing point
-  const vLines = 14;
-  ctx.globalAlpha = 1;
-  for (let i = 0; i <= vLines; i++) {
-    const t = i / vLines;
-    const xBottom = W * t;
-    ctx.globalAlpha = 0.06 + Math.abs(t - 0.5) * 0.2;
-    ctx.beginPath();
-    ctx.moveTo(vp.x, horizon);
-    ctx.lineTo(xBottom, H);
-    ctx.stroke();
+  var vLines = 14;
+  stk_ctx.globalAlpha = 1;
+  for (var i = 0; i <= vLines; i++) {
+    var t = i / vLines;
+    var xBottom = W * t;
+    stk_ctx.globalAlpha = 0.06 + Math.abs(t - 0.5) * 0.2;
+    stk_ctx.beginPath();
+    stk_ctx.moveTo(vp.x, horizon);
+    stk_ctx.lineTo(xBottom, H);
+    stk_ctx.stroke();
   }
-  ctx.restore();
+  stk_ctx.restore();
 
   // --- Scrolling stars ---
-  ctx.save();
-  const starSeed = [
+  stk_ctx.save();
+  var starSeed = [
     [0.12,0.08,1.2],[0.88,0.05,0.9],[0.34,0.18,1.5],[0.67,0.12,1.0],
     [0.23,0.03,0.7],[0.78,0.22,1.3],[0.45,0.09,1.1],[0.56,0.15,0.8],
     [0.09,0.25,1.4],[0.91,0.31,1.0],[0.38,0.28,0.6],[0.72,0.07,1.2],
@@ -1084,77 +997,77 @@ function drawArcadeBG() {
     [0.61,0.37,1.3],[0.04,0.44,1.0],[0.96,0.48,0.8],[0.42,0.50,1.2],
   ];
   starSeed.forEach(([sx, sy, speed]) => {
-    const x = sx * W;
-    const y = ((sy + bgTime * speed * 0.04) % 0.55) * horizon;
-    const flicker = 0.5 + 0.5 * Math.sin(bgTime * speed * 3 + sx * 10);
-    ctx.globalAlpha = 0.3 + flicker * 0.5;
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = '#aaddff';
-    ctx.shadowBlur = 3;
-    ctx.beginPath();
-    ctx.arc(x, y, 0.9, 0, Math.PI * 2);
-    ctx.fill();
+    var x = sx * W;
+    var y = ((sy + bgTime * speed * 0.04) % 0.55) * horizon;
+    var flicker = 0.5 + 0.5 * Math.sin(bgTime * speed * 3 + sx * 10);
+    stk_ctx.globalAlpha = 0.3 + flicker * 0.5;
+    stk_ctx.fillStyle = '#ffffff';
+    stk_ctx.shadowColor = '#aaddff';
+    stk_ctx.shadowBlur = 3;
+    stk_ctx.beginPath();
+    stk_ctx.arc(x, y, 0.9, 0, Math.PI * 2);
+    stk_ctx.fill();
   });
-  ctx.restore();
+  stk_ctx.restore();
 
   // --- Neon horizon line with pulse ---
-  const pulse = 0.6 + 0.4 * Math.sin(bgTime * 2);
-  ctx.save();
-  ctx.globalAlpha = pulse * 0.7;
-  const hLine = ctx.createLinearGradient(0, 0, W, 0);
+  var pulse = 0.6 + 0.4 * Math.sin(bgTime * 2);
+  stk_ctx.save();
+  stk_ctx.globalAlpha = pulse * 0.7;
+  var hLine = stk_ctx.createLinearGradient(0, 0, W, 0);
   hLine.addColorStop(0,   'transparent');
   hLine.addColorStop(0.2, '#ff00cc');
   hLine.addColorStop(0.5, '#ff44ff');
   hLine.addColorStop(0.8, '#ff00cc');
   hLine.addColorStop(1,   'transparent');
-  ctx.fillStyle = hLine;
-  ctx.shadowColor = '#ff00ff';
-  ctx.shadowBlur = 12;
-  ctx.fillRect(0, horizon - 1, W, 2);
-  ctx.globalAlpha = pulse * 0.25;
-  ctx.fillRect(0, horizon - 4, W, 8);
-  ctx.restore();
+  stk_ctx.fillStyle = hLine;
+  stk_ctx.shadowColor = '#ff00ff';
+  stk_ctx.shadowBlur = 12;
+  stk_ctx.fillRect(0, horizon - 1, W, 2);
+  stk_ctx.globalAlpha = pulse * 0.25;
+  stk_ctx.fillRect(0, horizon - 4, W, 8);
+  stk_ctx.restore();
 
   // --- Scanlines overlay ---
-  ctx.fillStyle = 'rgba(0,0,0,0.10)';
-  for (let y = 0; y < H; y += 3) ctx.fillRect(0, y, W, 1);
+  stk_ctx.fillStyle = 'rgba(0,0,0,0.10)';
+  for (var y = 0; y < H; y += 3) stk_ctx.fillRect(0, y, W, 1);
 
   // --- Vignette ---
-  const vignette = ctx.createRadialGradient(W/2, H/2, W*0.25, W/2, H/2, W*0.8);
+  var vignette = stk_ctx.createRadialGradient(W/2, H/2, W*0.25, W/2, H/2, W*0.8);
   vignette.addColorStop(0, 'transparent');
   vignette.addColorStop(1, 'rgba(0,0,0,0.55)');
-  ctx.fillStyle = vignette;
-  ctx.fillRect(0, 0, W, H);
+  stk_ctx.fillStyle = vignette;
+  stk_ctx.fillRect(0, 0, W, H);
 }
 
 function draw() {
-  ctx.clearRect(0, 0, W, H);
+  stk_ctx.clearRect(0, 0, W, H);
   drawArcadeBG();
 
   // Smooth scroll
   stackOffset += (targetOffset - stackOffset) * 0.11;
 
-  // Stacked blocks
-  blocks.forEach((b, i) => {
-    const alpha = Math.min(1, 0.35 + (i / blocks.length) * 0.65);
+  // Stacked stk_blocks
+  stk_blocks.forEach((b, i) => {
+    var alpha = Math.min(1, 0.35 + (i / stk_blocks.length) * 0.65);
     drawBlock(b, stackOffset, alpha);
   });
 
   // Moving block
-  if (moving && state === 'playing') {
+  if (moving && stk_state === 'playing') {
     moving.x += moving.speed;
     if (moving.x + moving.w > W + 30) moving.speed = -Math.abs(moving.speed);
     if (moving.x < -30) moving.speed =  Math.abs(moving.speed);
 
     // Guide lines
-    const last = blocks[blocks.length - 1];
-    ctx.save();
-    ctx.setLineDash([3, 7]);
-    ctx.strokeStyle = `${last.glow}22`;
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(last.x, 0); ctx.lineTo(last.x, H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(last.x + last.w, 0); ctx.lineTo(last.x + last.w, H); ctx.stroke();
-    ctx.restore();
+    var last = stk_blocks[stk_blocks.length - 1];
+    stk_ctx.save();
+    stk_ctx.setLineDash([3, 7]);
+    stk_ctx.strokeStyle = `${last.glow}22`;
+    stk_ctx.lineWidth = 1;
+    stk_ctx.beginPath(); stk_ctx.moveTo(last.x, 0); stk_ctx.lineTo(last.x, H); stk_ctx.stroke();
+    stk_ctx.beginPath(); stk_ctx.moveTo(last.x + last.w, 0); stk_ctx.lineTo(last.x + last.w, H); stk_ctx.stroke();
+    stk_ctx.restore();
 
     drawBlock(moving, stackOffset, 0.95);
   }
@@ -1166,7 +1079,7 @@ function draw() {
 
 function loop() {
   draw();
-  animId = requestAnimationFrame(loop);
+  stk_animId = requestAnimationFrame(loop);
 }
 
 // ── Input ─────────────────────────────────────────────────
@@ -1187,41 +1100,41 @@ document.getElementById('pause-lobby-btn').addEventListener('click', e => {
 });
 document.getElementById('pause-btn').addEventListener('click', e => {
   e.stopPropagation();
-  if (state === 'playing') pauseGame();
-  else if (state === 'paused') resumeGame();
+  if (stk_state === 'playing') pauseGame();
+  else if (stk_state === 'paused') resumeGame();
 });
 
 // Keyboard
 document.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     e.preventDefault();
-    if (state === 'playing') drop();
-    else if (state === 'idle') startGame();
-    else if (state === 'paused') resumeGame();
+    if (stk_state === 'playing') drop();
+    else if (stk_state === 'idle') startGame();
+    else if (stk_state === 'paused') resumeGame();
   }
   if (e.code === 'Escape' || e.code === 'KeyP') {
-    if (state === 'playing') pauseGame();
-    else if (state === 'paused') resumeGame();
+    if (stk_state === 'playing') pauseGame();
+    else if (stk_state === 'paused') resumeGame();
   }
 });
 
-// Touch / click on canvas
+// Touch / click on stk_canvas
 function handleAction(e) {
   // Don't fire if tapping a button
-  if (e.target !== canvas) return;
+  if (e.target !== stk_canvas) return;
   e.preventDefault();
-  if (state === 'playing') drop();
+  if (stk_state === 'playing') drop();
 }
 
-canvas.addEventListener('pointerdown', handleAction);
+stk_canvas.addEventListener('pointerdown', handleAction);
 
 loop();
-</script>
-        </div>
-    </div>
-</div>
 
-<script>
+        })();
+    }
+}
+
+
 // ── STORE ──
 var GAMES=[
     {id:'clicker',name:'CLICKER',genre:'Casual',color:'#001f2e',accent:'#00e5ff',icon:'&#128070;'},
@@ -2847,6 +2760,7 @@ loop();
 
 renderStore();
 renderLibrary();
+
 </script>
 </body>
 </html>
