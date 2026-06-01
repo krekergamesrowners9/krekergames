@@ -323,7 +323,7 @@
   </div>
 
   <div class="canvas-wrap">
-    <canvas id="stk-canvas" width="320" height="480"></canvas>
+    
 
     <!-- Start / Lobby overlay -->
     <div class="overlay" id="stk_start-overlay">
@@ -682,7 +682,7 @@ function initStack(){
         stkLoopStarted = true;
         (function(){
 
-var stk_canvas = document.getElementById('stk_canvas');
+var stk_canvas = document.getElementById('stk-canvas');
 var stk_ctx = stk_canvas.getContext('2d');
 var W = stk_canvas.width, H = stk_canvas.height;
 
@@ -718,14 +718,13 @@ var stk_animId = null;
 
 // Update best stk_score displays
 function updateBestDisplays() {
-  document.getElementById('best-stk_score-start').textContent = bestScore;
-  document.getElementById('best-stk_score-over').textContent = bestScore;
+  document.getElementById('stk-best-score-start').textContent = bestScore;
+  document.getElementById('stk-best-score-over').textContent = bestScore;
 }
-updateBestDisplays();
 
 // ── Overlays ──────────────────────────────────────────────
 function showOverlay(id) {
-  ['start-overlay','over-overlay','pause-overlay'].forEach(n => {
+  ['stk-start-overlay','stk-over-overlay','stk-pause-overlay'].forEach(n => {
     document.getElementById(n).classList.toggle('hidden', n !== id);
   });
 }
@@ -848,7 +847,7 @@ function triggerGameOver() {
     localStorage.setItem('stackBest', bestScore);
     updateBestDisplays();
   }
-  document.getElementById('final-stk_score').textContent = stk_score;
+  document.getElementById('stk-final-score').textContent = stk_score;
   setTimeout(() => showOverlay('over-overlay'), 400);
 }
 
@@ -1141,7 +1140,6 @@ var GAMES=[
     {id:'snaker',name:'SNAKER',genre:'Arcade',color:'#001a0a',accent:'#22c55e',icon:'&#128013;'},
     {id:'ttt',name:'TIC TAC TOE',genre:'Strategy',color:'#0d0a1e',accent:'#a855f7',icon:'&#9997;'},
     {id:'defense',name:'GOLDEN DEFENSE',genre:'Strategy',color:'#1a1200',accent:'#EF9F27',icon:'&#9876;'},
-    {id:'stack',name:'STACK',genre:'Arcade',color:'#0a0010',accent:'#b44aff',icon:'&#127372;'},
     {id:'stack',name:'STACK',genre:'Arcade',color:'#04020f',accent:'#00dcff',icon:'&#127915;'},
     {id:'game3',name:'RACER',genre:'Action',color:'#1a0800',accent:'#ff4500',icon:'&#127950;',comingSoon:true},
 ];
@@ -2306,7 +2304,7 @@ function initStack(){
         stkLoopStarted=true;
         (function(){
 
-var stk_canvas = document.getElementById('stk-stk_canvas');
+var stk_canvas = document.getElementById('stk-canvas');
 var stk_ctx = stk_canvas.getContext('2d');
 var stk_W = stk_canvas.width, stk_H = stk_canvas.height;
 
@@ -2345,7 +2343,6 @@ function updateBestDisplays() {
   document.getElementById('stk-best-stk_score-start').textContent = bestScore;
   document.getElementById('stk-best-stk_score-over').textContent = bestScore;
 }
-updateBestDisplays();
 
 // ── Overlays ──────────────────────────────────────────────
 function showOverlay(id) {
