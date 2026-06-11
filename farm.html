@@ -1,0 +1,523 @@
+[farm (1).html](https://github.com/user-attachments/files/28844314/farm.1.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Farm Clicker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --card: rgba(255,255,255,0.12);
+      --card-border: rgba(255,255,255,0.22);
+      --text: #fff;
+      --accent: #FFD166;
+      --accent2: #06D6A0;
+      --sidebar-w: 290px;
+    }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(160deg, #1a6fc4 0%, #0d4a8a 100%);
+      height: 100vh; overflow: hidden;
+      color: var(--text);
+      display: flex; flex-direction: column; align-items: center;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .bg-deco { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .bg-deco span { position: absolute; opacity: 0.08; animation: floatUp linear infinite; }
+    @keyframes floatUp {
+      from { transform: translateY(110vh) rotate(0deg); opacity: 0.08; }
+      to   { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+    .main {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      width: 100%; height: 100vh;
+      justify-content: center; gap: 20px; padding: 20px;
+    }
+    header { text-align: center; }
+    header h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.8rem, 7vw, 2.8rem);
+      color: var(--accent);
+      text-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    }
+    header p { font-size: 0.85rem; opacity: 0.65; margin-top: 3px; }
+
+    /* crop tier label under title */
+    #tierLabel {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+      min-height: 1.1em;
+      transition: opacity 0.3s;
+    }
+
+    .score-box {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 12px 36px; text-align: center;
+      backdrop-filter: blur(8px);
+    }
+    .score-label { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+    .score-val {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2rem, 8vw, 3rem);
+      color: var(--accent); line-height: 1.1;
+    }
+    .per-sec { font-size: 0.75rem; opacity: 0.55; margin-top: 2px; }
+
+    /* Clicker button */
+    .fruit-btn {
+      width: clamp(130px, 32vw, 170px);
+      height: clamp(130px, 32vw, 170px);
+      border-radius: 50%; border: none;
+      background: radial-gradient(circle at 38% 35%, #fff9 10%, transparent 60%),
+                  radial-gradient(circle at 60% 65%, #fff2 8%, transparent 50%),
+                  linear-gradient(135deg, #FFD166, #ff9900);
+      box-shadow: 0 8px 0 #b36a00, 0 12px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+      font-size: clamp(3rem, 11vw, 4.5rem);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.6s ease;
+      outline: none;
+    }
+    .fruit-btn:active, .fruit-btn.pressed {
+      transform: scale(0.93) translateY(5px);
+      box-shadow: 0 3px 0 #b36a00, 0 5px 16px rgba(0,0,0,0.25);
+    }
+    /* tier glow ring */
+    .fruit-btn.tier-1  { box-shadow: 0 8px 0 #b36a00, 0 0 24px 6px rgba(255,140,0,0.4); }
+    .fruit-btn.tier-2  { box-shadow: 0 8px 0 #2e7d32, 0 0 28px 8px rgba(76,175,80,0.45); }
+    .fruit-btn.tier-3  { box-shadow: 0 8px 0 #01579b, 0 0 30px 10px rgba(3,169,244,0.5); }
+    .fruit-btn.tier-4  { box-shadow: 0 8px 0 #6a1b9a, 0 0 34px 12px rgba(171,71,188,0.55); }
+    .fruit-btn.tier-5  { box-shadow: 0 8px 0 #b71c1c, 0 0 38px 14px rgba(244,67,54,0.6); }
+    .fruit-btn.tier-6  { box-shadow: 0 8px 0 #e65100, 0 0 42px 16px rgba(255,152,0,0.65); }
+    .fruit-btn.tier-7  { box-shadow: 0 8px 0 #1a237e, 0 0 48px 20px rgba(63,81,181,0.7); }
+    .fruit-btn.tier-8  { box-shadow: 0 8px 0 #004d40, 0 0 56px 24px rgba(0,150,136,0.75); }
+    .fruit-btn.tier-9  { box-shadow: 0 8px 0 #880e4f, 0 0 64px 28px rgba(233,30,99,0.8); }
+    .fruit-btn.tier-10 {
+      box-shadow: 0 8px 0 #4a148c, 0 0 72px 32px rgba(156,39,176,0.9);
+      animation: legendaryPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes legendaryPulse {
+      0%,100% { filter: brightness(1); }
+      50%      { filter: brightness(1.25) saturate(1.4); }
+    }
+
+    /* unlock flash overlay */
+    .unlock-flash {
+      position: fixed; inset: 0; z-index: 500;
+      background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      animation: flashOut 0.7s ease-out forwards;
+    }
+    @keyframes flashOut { from { opacity: 1; } to { opacity: 0; } }
+
+    /* unlock toast */
+    .unlock-toast {
+      position: fixed;
+      top: 18px; left: 50%; transform: translateX(-50%);
+      background: rgba(10,40,80,0.92);
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 10px 22px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      color: var(--accent);
+      z-index: 600;
+      white-space: nowrap;
+      pointer-events: none;
+      animation: toastAnim 2.4s ease forwards;
+    }
+    @keyframes toastAnim {
+      0%   { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+      12%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+      75%  { opacity: 1; }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    }
+
+    /* +N pop */
+    .pop {
+      position: fixed;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.5rem;
+      color: var(--accent);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      pointer-events: none; z-index: 9999;
+      animation: popUp 0.9s ease-out forwards;
+    }
+    @keyframes popUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      80%  { opacity: 0.8; }
+      100% { opacity: 0; transform: translateY(-70px) scale(1.3); }
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed; top: 0; right: 0;
+      width: var(--sidebar-w); height: 100vh;
+      background: rgba(10, 40, 80, 0.88);
+      backdrop-filter: blur(16px);
+      border-left: 1px solid rgba(255,255,255,0.15);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-toggle {
+      position: absolute; left: -44px; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 56px;
+      background: rgba(10,40,80,0.88);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.15); border-right: none;
+      border-radius: 12px 0 0 12px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.2rem; color: var(--accent);
+      transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      flex-direction: column; gap: 2px;
+    }
+    .sidebar-toggle:active { background: rgba(20,60,110,0.95); }
+    .toggle-arrow { display: inline-block; transition: transform 0.3s ease; }
+    .sidebar.open .toggle-arrow { transform: rotate(180deg); }
+
+    .sidebar-header {
+      padding: 18px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+    .sidebar-header h2 {
+      font-family: 'Fredoka One', cursive;
+      color: var(--accent); font-size: 1.2rem;
+    }
+    .sidebar-header p { font-size: 0.7rem; opacity: 0.45; margin-top: 1px; }
+
+    .upgrade-list {
+      flex: 1; overflow-y: auto;
+      padding: 8px 8px 20px;
+      display: flex; flex-direction: column; gap: 7px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .upgrade-list::-webkit-scrollbar { width: 3px; }
+    .upgrade-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+    /* Section label inside sidebar */
+    .upgrade-section {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.72rem;
+      opacity: 0.4;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 4px 2px;
+    }
+
+    .upgrade-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 13px;
+      padding: 10px 12px;
+      display: flex; align-items: center; gap: 9px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .upgrade-card:active { transform: scale(0.97); }
+    .upgrade-card.affordable { border-color: var(--accent2); background: rgba(6,214,160,0.12); }
+    .upgrade-card.maxed { opacity: 0.35; cursor: default; }
+
+    .upgrade-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .upgrade-info { flex: 1; min-width: 0; }
+    .upgrade-name { font-weight: 700; font-size: 0.85rem; }
+    .upgrade-desc { font-size: 0.68rem; opacity: 0.58; margin-top: 1px; }
+    .upgrade-count { font-size: 0.62rem; opacity: 0.4; margin-top: 1px; }
+
+    .upgrade-cost {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.85rem; color: var(--accent);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .upgrade-cost.cant { color: rgba(255,255,255,0.28); }
+
+    .badge {
+      background: var(--accent2); color: #fff;
+      font-size: 0.55rem; font-weight: 700;
+      border-radius: 999px; padding: 1px 5px;
+      display: none;
+    }
+    .badge.show { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="bg-deco" id="bgDeco"></div>
+
+<div class="main">
+  <header>
+    <h1>🌾 Farm Clicker</h1>
+    <div id="tierLabel">Common Crop</div>
+  </header>
+
+  <div class="score-box">
+    <div class="score-label">Fruits</div>
+    <div class="score-val" id="scoreVal">0</div>
+    <div class="per-sec" id="perSec">0 per second</div>
+  </div>
+
+  <button class="fruit-btn tier-0" id="fruitBtn" aria-label="Harvest fruit">🍊</button>
+</div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle upgrades">
+    <span class="toggle-arrow">◀</span>
+    <span class="badge" id="affordBadge">!</span>
+  </div>
+  <div class="sidebar-header">
+    <h2>Upgrades</h2>
+    <p>Tap to buy</p>
+  </div>
+  <div class="upgrade-list" id="upgradeList"></div>
+</div>
+
+<script>
+  // ── Crop tiers (hidden milestones) ─────────────────────
+  // totalFruits thresholds — player never sees these
+  const cropTiers = [
+    { threshold: 0,        emoji: '🍊',  name: 'Common Crop',      tierClass: 'tier-0' },
+    { threshold: 100,      emoji: '🍎',  name: 'Fresh Apple',       tierClass: 'tier-1' },
+    { threshold: 500,      emoji: '🍇',  name: 'Purple Grapes',     tierClass: 'tier-2' },
+    { threshold: 2000,     emoji: '🥝',  name: 'Kiwi Harvest',      tierClass: 'tier-3' },
+    { threshold: 8000,     emoji: '🍍',  name: 'Tropical Pineapple',tierClass: 'tier-4' },
+    { threshold: 30000,    emoji: '🥭',  name: 'Exotic Mango',      tierClass: 'tier-5' },
+    { threshold: 120000,   emoji: '🌹',  name: 'Rare Rose Fruit',   tierClass: 'tier-6' },
+    { threshold: 500000,   emoji: '🫐',  name: 'Ancient Blueberry', tierClass: 'tier-7' },
+    { threshold: 2000000,  emoji: '🍄',  name: 'Mystic Mushroom',   tierClass: 'tier-8' },
+    { threshold: 10000000, emoji: '🍈',  name: 'Ancient Melon',     tierClass: 'tier-9' },
+    { threshold: 50000000, emoji: '🫒',  name: 'Legendary Olive',   tierClass: 'tier-10' },
+  ];
+  let currentTierIdx = 0;
+
+  // ── State ──────────────────────────────────────────────
+  let fruits = 0;
+  let totalFruits = 0;
+  let clickPower = 1;
+  let passiveRate = 0;
+
+  // ── Upgrades (sorted cheapest to most expensive) ───────
+  const upgrades = [
+    { id:'hands1',    icon:'👐', name:'Better Hands',      desc:'+1 per click',   baseCost:10,      costMult:1.5,  count:0, maxCount:20, effect:()=>{ clickPower += 1; } },
+    { id:'basket',    icon:'🧺', name:'Fruit Basket',      desc:'+1/sec',         baseCost:25,      costMult:1.6,  count:0, maxCount:20, effect:()=>{ passiveRate += 1; } },
+    { id:'gloves',    icon:'🧤', name:'Harvest Gloves',    desc:'+2 per click',   baseCost:80,      costMult:1.55, count:0, maxCount:15, effect:()=>{ clickPower += 2; } },
+    { id:'tree',      icon:'🌳', name:'Fruit Tree',        desc:'+5/sec',         baseCost:150,     costMult:1.65, count:0, maxCount:18, effect:()=>{ passiveRate += 5; } },
+    { id:'golden',    icon:'✨', name:'Golden Touch',      desc:'+5 per click',   baseCost:300,     costMult:1.8,  count:0, maxCount:12, effect:()=>{ clickPower += 5; } },
+    { id:'fert',      icon:'🌱', name:'Fertilizer',        desc:'Click ×1.5',     baseCost:500,     costMult:3.0,  count:0, maxCount:5,  effect:()=>{ clickPower = Math.ceil(clickPower * 1.5); } },
+    { id:'tractor',   icon:'🚜', name:'Tractor',           desc:'+20/sec',        baseCost:800,     costMult:1.7,  count:0, maxCount:15, effect:()=>{ passiveRate += 20; } },
+    { id:'magic',     icon:'🪄', name:'Magic Wand',        desc:'+15 per click',  baseCost:2500,    costMult:2.0,  count:0, maxCount:10, effect:()=>{ clickPower += 15; } },
+    { id:'rain',      icon:'🌧️', name:'Rain Dance',        desc:'Passive ×1.5',   baseCost:3000,    costMult:3.0,  count:0, maxCount:5,  effect:()=>{ passiveRate = Math.ceil(passiveRate * 1.5); } },
+    { id:'orchard',   icon:'🌲', name:'Orchard',           desc:'+60/sec',        baseCost:4000,    costMult:1.75, count:0, maxCount:12, effect:()=>{ passiveRate += 60; } },
+    { id:'laser',     icon:'⚡', name:'Lightning Harvest', desc:'+50 per click',  baseCost:20000,   costMult:2.1,  count:0, maxCount:8,  effect:()=>{ clickPower += 50; } },
+    { id:'factory',   icon:'🏭', name:'Juice Factory',     desc:'+200/sec',       baseCost:25000,   costMult:1.85, count:0, maxCount:10, effect:()=>{ passiveRate += 200; } },
+    { id:'sun',       icon:'☀️', name:'Eternal Sun',       desc:'Click ×2',       baseCost:50000,   costMult:4.0,  count:0, maxCount:3,  effect:()=>{ clickPower *= 2; } },
+    { id:'drone',     icon:'🚁', name:'Harvest Drone',     desc:'+600/sec',       baseCost:150000,  costMult:1.9,  count:0, maxCount:8,  effect:()=>{ passiveRate += 600; } },
+    { id:'titan',     icon:'🔱', name:'Titan Grip',        desc:'+200 per click', baseCost:200000,  costMult:2.2,  count:0, maxCount:6,  effect:()=>{ clickPower += 200; } },
+    { id:'storm',     icon:'⛈️', name:'Mega Storm',        desc:'Passive ×2',     baseCost:300000,  costMult:4.0,  count:0, maxCount:3,  effect:()=>{ passiveRate *= 2; } },
+    { id:'satellite', icon:'🛸', name:'Farm Satellite',    desc:'+2000/sec',      baseCost:1000000, costMult:2.0,  count:0, maxCount:6,  effect:()=>{ passiveRate += 2000; } },
+    { id:'dimension', icon:'🌀', name:'Dimension Farm',    desc:'+8000/sec',      baseCost:8000000, costMult:2.1,  count:0, maxCount:5,  effect:()=>{ passiveRate += 8000; } },
+  ];
+
+  function cost(u) {
+    return Math.floor(u.baseCost * Math.pow(u.costMult, u.count));
+  }
+  function fmt(n) {
+    if (n >= 1e12) return (n/1e12).toFixed(1)+'T';
+    if (n >= 1e9)  return (n/1e9).toFixed(1)+'B';
+    if (n >= 1e6)  return (n/1e6).toFixed(1)+'M';
+    if (n >= 1e3)  return (n/1e3).toFixed(1)+'K';
+    return Math.floor(n).toString();
+  }
+
+  // ── DOM refs ───────────────────────────────────────────
+  const scoreEl  = document.getElementById('scoreVal');
+  const perSecEl = document.getElementById('perSec');
+  const btn      = document.getElementById('fruitBtn');
+  const list     = document.getElementById('upgradeList');
+  const sidebar  = document.getElementById('sidebar');
+  const toggle   = document.getElementById('sidebarToggle');
+  const badge    = document.getElementById('affordBadge');
+  const tierLbl  = document.getElementById('tierLabel');
+
+  // ── Sidebar ────────────────────────────────────────────
+  let sidebarOpen = false;
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+    sidebar.classList.toggle('open', sidebarOpen);
+    renderUpgrades(); // refresh badge
+  }
+  toggle.addEventListener('click', toggleSidebar);
+  toggle.addEventListener('touchend', e => { e.preventDefault(); toggleSidebar(); });
+
+  // ── Score update ───────────────────────────────────────
+  function updateScore() {
+    scoreEl.textContent = fmt(fruits);
+    perSecEl.textContent = passiveRate > 0 ? `${fmt(passiveRate)}/sec` : '0/sec';
+    checkCropTier();
+  }
+
+  // ── Crop tier check ────────────────────────────────────
+  function checkCropTier() {
+    let newIdx = 0;
+    for (let i = cropTiers.length - 1; i >= 0; i--) {
+      if (totalFruits >= cropTiers[i].threshold) { newIdx = i; break; }
+    }
+    if (newIdx !== currentTierIdx) {
+      const tier = cropTiers[newIdx];
+      currentTierIdx = newIdx;
+      // update button emoji & glow
+      btn.textContent = tier.emoji;
+      btn.className = `fruit-btn ${tier.tierClass}`;
+      tierLbl.textContent = tier.name;
+      // flash + toast
+      showUnlockFX(tier.emoji, tier.name);
+    }
+  }
+
+  function showUnlockFX(emoji, name) {
+    // screen flash
+    const flash = document.createElement('div');
+    flash.className = 'unlock-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 700);
+    // toast
+    const toast = document.createElement('div');
+    toast.className = 'unlock-toast';
+    toast.textContent = `${emoji} New crop unlocked!`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2400);
+  }
+
+  // ── Build upgrade list ─────────────────────────────────
+  upgrades.forEach(u => {
+    const card = document.createElement('div');
+    card.className = 'upgrade-card';
+    card.id = 'upg-' + u.id;
+    card.innerHTML = `
+      <div class="upgrade-icon">${u.icon}</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">${u.name}</div>
+        <div class="upgrade-desc">${u.desc}</div>
+        <div class="upgrade-count" id="cnt-${u.id}">Owned: 0</div>
+      </div>
+      <div class="upgrade-cost" id="cst-${u.id}">🍊 ${fmt(cost(u))}</div>
+    `;
+    card.addEventListener('click', () => buyUpgrade(u));
+    card.addEventListener('touchend', e => { e.preventDefault(); buyUpgrade(u); });
+    list.appendChild(card);
+  });
+
+  function buyUpgrade(u) {
+    if (u.count >= u.maxCount) return;
+    const c = cost(u);
+    if (fruits < c) return;
+    fruits -= c;
+    u.count++;
+    u.effect();
+    updateScore();
+    renderUpgrades();
+  }
+
+  function renderUpgrades() {
+    let anyAffordable = false;
+    upgrades.forEach(u => {
+      const card = document.getElementById('upg-' + u.id);
+      const cstEl = document.getElementById('cst-' + u.id);
+      const cntEl = document.getElementById('cnt-' + u.id);
+      const c = cost(u);
+      const maxed = u.count >= u.maxCount;
+      cntEl.textContent = `Owned: ${u.count}${maxed ? ' (max)' : ''}`;
+      if (maxed) {
+        card.className = 'upgrade-card maxed';
+        cstEl.textContent = 'MAX';
+        cstEl.className = 'upgrade-cost cant';
+      } else {
+        const can = fruits >= c;
+        if (can) anyAffordable = true;
+        card.className = 'upgrade-card' + (can ? ' affordable' : '');
+        cstEl.textContent = `🍊 ${fmt(c)}`;
+        cstEl.className = 'upgrade-cost' + (can ? '' : ' cant');
+      }
+    });
+    badge.classList.toggle('show', anyAffordable && !sidebarOpen);
+  }
+
+  // ── Harvest ────────────────────────────────────────────
+  function harvest(e) {
+    fruits += clickPower;
+    totalFruits += clickPower;
+    updateScore();
+    renderUpgrades();
+    spawnPop(e);
+  }
+
+  btn.addEventListener('click', harvest);
+  btn.addEventListener('touchstart', e => { e.preventDefault(); btn.classList.add('pressed'); }, { passive: false });
+  btn.addEventListener('touchend', e => {
+    e.preventDefault();
+    btn.classList.remove('pressed');
+    harvest(e.changedTouches[0]);
+  });
+
+  // ── Pop ────────────────────────────────────────────────
+  function spawnPop(e) {
+    const pop = document.createElement('div');
+    pop.className = 'pop';
+    pop.textContent = '+' + fmt(clickPower);
+    let x, y;
+    if (e?.clientX !== undefined) { x = e.clientX; y = e.clientY; }
+    else { const r = btn.getBoundingClientRect(); x = r.left + r.width/2; y = r.top + r.height/2; }
+    pop.style.left = (x - 20) + 'px';
+    pop.style.top  = (y - 20) + 'px';
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 900);
+  }
+
+  // ── Passive tick ───────────────────────────────────────
+  let last = performance.now();
+  function tick(now) {
+    const dt = (now - last) / 1000;
+    last = now;
+    if (passiveRate > 0) {
+      fruits += passiveRate * dt;
+      totalFruits += passiveRate * dt;
+      updateScore();
+      renderUpgrades();
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // ── BG deco ────────────────────────────────────────────
+  const deco = document.getElementById('bgDeco');
+  const emojis = ['🍓','🍇','🍊','🍋','🍎','🍑','🍒','🥝','🌾','🌻','🥭','🍍'];
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement('span');
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.animationDuration = (12 + Math.random() * 16) + 's';
+    s.style.animationDelay = (Math.random() * 20) + 's';
+    s.style.fontSize = (1.2 + Math.random() * 1.8) + 'rem';
+    deco.appendChild(s);
+  }
+
+  updateScore();
+  renderUpgrades();
+</script>
+</body>
+</html>
